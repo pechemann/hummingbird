@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	implements="org.flashapi.hummingbird.view.IFlexView"
+	width="100%" height="100%"
+	creationComplete="this.creationCompleteHandler();">
+	
+	<fx:Script>
+	<![CDATA[
+		import controllers.IAppController;
+		import models.IAppModel;
+		import models.IHomeModel;
+		import models.HomeModel;
+		
+		[RegisterClass(type="models.HomeModel")]
+		public var homeModelRef:Class = HomeModel;
+		
+		[Model(alias="AppModel")]
+		public var appModel:IAppModel;
+		
+		[Controller(alias="HomeModel")]
+		public var homeModel:IHomeModel;
+		
+		[Controller(alias="AppController")]
+		public var controller:IAppController;
+		
+		/**
+		 *	@inheritDoc
+		 */
+		public function finalize():void { }
+		
+		private function creationCompleteHandler():void {
+			this.message.text = this.homeModel.getMessage();
+		}
+	]]>
+	</fx:Script>
+	
+	<s:Label
+		id="message"
+		width="200"
+		left="50" top="20"/>
+</s:Group>

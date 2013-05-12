@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	implements="org.flashapi.hummingbird.view.IFlexView"
+	width="100%" height="100%"
+	creationComplete="this.creationCompleteHandler();">
+	
+	<fx:Script>
+	<![CDATA[
+		import controllers.IAppController;
+		import models.IAppModel;
+		import events.ModelEvent;
+		
+		[Model(alias="AppModel")]
+		public var model:IAppModel;
+		
+		[Controller(alias="AppController")]
+		public var controller:IAppController;
+		
+		/**
+		 *	@inheritDoc
+		 */
+		public function finalize():void { }
+		
+		private function creationCompleteHandler():void {
+			this.model.addEventListener(ModelEvent.NAME_CHANGE, this.nameChangeHandler);
+			this.setPromptMesage();
+		}
+		
+		private function inputFocusInHandler():void {
+			this.imputField.text = "";
+		}
+		
+		private function validateHandler():void {
+			this.controller.nameChange(this.imputField.text);
+			this.setPromptMesage();
+			this.promptText.setFocus();
+		}
+		
+		private function nameChangeHandler(e:ModelEvent):void {
+			this.promptText.text = "Hello " + this.model.getName() + "!";
+		}
+		
+		private function setPromptMesage():void {
+			this.imputField.text = this.model.getPromptMessage();
+		}
+	]]>
+	</fx:Script>
+	
+	<s:TextInput
+		id="imputField"
+		left="10" top="10"
+		enter="this.validateHandler()"
+		focusIn="this.inputFocusInHandler()"/>
+	<s:Label
+		id="promptText"
+		left="10" top="40"/>
+</s:Group>

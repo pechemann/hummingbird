@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	implements="org.flashapi.hummingbird.view.IFlexView"
+	width="100%" height="100%"
+	creationComplete="this.creationCompleteHandler();">
+	
+	<fx:Script>
+	<![CDATA[
+		import constants.ApplicationState;
+		import controllers.IAppController;
+		import models.IAppModel;
+		import events.ModelEvent;
+		
+		[Model(alias="AppModel")]
+		public var model:IAppModel;
+		
+		[Controller(alias="AppController")]
+		public var controller:IAppController;
+		
+		/**
+		 *	@inheritDoc
+		 */
+		public function finalize():void { }
+		
+		private function creationCompleteHandler():void {
+			this.welcomeMessage.text = this.model.getWelcomeMessage();
+		}
+		
+		private function btnClickHandler():void {
+			this.controller.changeApplicationState(ApplicationState.HOME);
+		}
+		
+	]]>
+	</fx:Script>
+	
+	<s:Label
+		id="welcomeMessage"
+		left="75" top="20"/>
+	<s:Button
+		label="Launch Application"
+		left="55" top="55"
+		click="this.btnClickHandler();" />
+</s:Group>
