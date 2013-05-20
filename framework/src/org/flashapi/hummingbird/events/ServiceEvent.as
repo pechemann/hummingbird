@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.events {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 19/05/2013 17:17
+	 *  @version 1.0.1, 20/05/2013 16:25
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -72,6 +72,37 @@ package org.flashapi.hummingbird.events {
 		public function ServiceEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false) {
 			super(type, bubbles, cancelable);
 		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	The <code>data</code> property lets you pass a value to the event.
+		 * 
+		 * 	@default null
+		 */
+		public var data:Object;
+		
+		/**
+		 * 	The <code>message</code> property allos you to pass a information message
+		 * 	to the event. This property can be used to return error messagess when 
+		 * 	the service transaction has failed.
+		 * 
+		 * 	@default null
+		 */
+		public var message:String;
+		
+		/**
+		 * 	A convenient property to specify the identifier of the operation, defined
+		 * 	by the service (usually a Web service), responsible for dispatching this
+		 * 	event.
+		 * 
+		 * 	@default null
+		 */
+		public var operationId:Object;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -135,14 +166,18 @@ package org.flashapi.hummingbird.events {
 		 * 	@private
 		 */
 		override public function clone():Event {
-			return new ServiceEvent(this.type, this.bubbles, this.cancelable);
+			var evt:ServiceEvent =  new ServiceEvent(this.type, this.bubbles, this.cancelable);
+			evt.data = this.data;
+			evt.message = this.message;
+			evt.operationId = this.operationId;
+			return evt;
 		}
 		
 		/**
 		 * 	@private
 		 */
 		override public function toString():String {
-			return this.formatToString("ServiceEvent", "type", "bubbles", "cancelable");
+			return this.formatToString("ServiceEvent", "type", "bubbles", "cancelable", "data", "message", "operationId");
 		}
 	}
 }
