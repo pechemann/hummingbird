@@ -51,6 +51,8 @@ package org.flashapi.hummingbird.utils {
 	import org.flashapi.hummingbird.core.IApplicationContext;
 	import org.flashapi.hummingbird.events.DependencyEvent;
 	import org.flashapi.hummingbird.exceptions.MetadataException;
+	import org.flashapi.hummingbird.model.IModel;
+	import org.flashapi.hummingbird.service.IService;
 	import org.flashapi.hummingbird.view.IStarlingView;
 	import org.flashapi.hummingbird.view.IView;
 	
@@ -170,7 +172,7 @@ package org.flashapi.hummingbird.utils {
 		
 		/**
 		 * 	Parses the specified instance for retrieving and instantiating the classes
-		 * 	declared with the RegisterClass metadata. this metho is recursive.
+		 * 	declared with the RegisterClass metadata. This method is recursive.
 		 * 
 		 * 	@param	obj						The object to parse.
 		 * 	@param	singletonInstances		The collection of singleton MVC instances
@@ -301,7 +303,7 @@ package org.flashapi.hummingbird.utils {
 		 * 								the AS3 reflection API.
 		 * 	@param	singletonInstances	The collection of singleton MVC instances
 		 * 								stored in a Hummingbird IoC container.
-		 * 	@param	metadataRef			The metadata tag considered fon this injection
+		 * 	@param	metadataRef			The metadata tag considered for this injection
 		 * 								of dependecies; must be MetadataConstant.MODEL
 		 * 								MetadataConstant.CONTROLLER or MetadataConstant.SERVICE.
 		 */
@@ -312,13 +314,95 @@ package org.flashapi.hummingbird.utils {
 			var parent:XML;
 			var propName:String;
 			var alias:String;
+			var singleton:Object;
 			for (; len >= 0; len--) {
 				dependency = dependencyList[len];
 				parent = dependency.parent();
 				propName = parent.@name;
 				alias = dependency.arg[0].@value;
-				obj[propName] = singletonInstances[alias];
+				singleton = singletonInstances[alias];
+				MetadataParser.checkInvalidMVCMetadata(metadataRef, singleton, alias);
+				obj[propName] = singleton;
 			}
+		}
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Checks whether the specified object uses invalid MVC metadata declarations,
+		 * 	or not.
+		 * 
+		 * 	@param	metadataRef			The metadata tag considered for the specified
+		 * 								object.
+		 * 	@param	obj					The object for which to check the MVC metadata.
+		 * 	@param	alias				The alias of the specified object.
+		 * 
+		 * 	@throws org.flashapi.hummingbird.exceptions.MetadataException
+		 * 			Throws a <code>MetadataException</code> exception if the specified
+		 * 			object contains invalid MVC metadata.
+		 */
+		private static function checkInvalidMVCMetadata(metadataRef:String, obj:Object, alias:String) :void {
+			var isValid:Boolean = true;
+			var expectactedValue:String;
+			if (metadataRef == MetadataConstant.MODEL) {
+				isValid = Boolean(obj is IModel);
+				expectactedValue = MetadataConstant.MODEL;
+			} else if (metadataRef == MetadataConstant.CONTROLLER) {
+				isValid = Boolean(obj is IController);
+				expectactedValue = MetadataConstant.CONTROLLER;
+			} else if (metadataRef == MetadataConstant.SERVICE) {
+				isValid = Boolean(obj is IService);
+				expectactedValue = MetadataConstant.SERVICE;
+			}
+			if (isValid == false) {
+				throw new MetadataException(
+					new MetadataErrorBuilder()
+					.message("invalid metadata declaration")
+					.message(metadataRef, " '", "'")
+					.message(alias, " on '","'")
+					.dot()
+					.expected(MetadataParser.getFoundInterface(obj), " ")
+					.dot()
+					.build()
+				);
+			}
+		}
+		
+		/**
+		 * 	@private
+		 * 	Returns the MVC interface implemented by the specified MVC object.
+		 * 
+		 * 	@param	obj	The MVC object for which to find the MVC interface.
+		 * 	
+		 * 	@return	The MVC interface implemented by the specified MVC object.
+		 */
+		private static function getFoundInterface(obj:Object):String {
+			var reflection:XML = describeType(obj);
+			var interfaces:XMLList = reflection..implementsInterface;
+			var interfaceDeclaration:String
+			if (interfaces.(@type == InterfaceReference.CONTROLLER) != null) {
+				interfaceDeclaration =
+					MetadataParser.getInterfaceRef(InterfaceReference.CONTROLLER);
+			} else if (interfaces.(@type == InterfaceReference.MODEL) != null) {
+				interfaceDeclaration =
+					MetadataParser.getInterfaceRef(InterfaceReference.MODEL);
+			} else if (interfaces.(@type == InterfaceReference.CONTROLLER) != null) {
+				interfaceDeclaration =
+					MetadataParser.getInterfaceRef(InterfaceReference.CONTROLLER);
+			}
+			return interfaceDeclaration;
+		}
+		
+		/**
+		 * 	@private
+		 * 	Returns the name of a MVC interface stripped from its package names.
+		 * 
+		 * 	@param	interfaceRef	The fully qualified interface name.
+		 * 	
+		 * 	@return	 The name of a MVC interface stripped from its package names.
+		 */
+		private static function getInterfaceRef(interfaceRef:String):String {
+			return interfaceRef.substr(interfaceRef.lastIndexOf(":") + 1);
 		}
 		
 		/**
@@ -331,7 +415,7 @@ package org.flashapi.hummingbird.utils {
 		 * 								dependencies.
 		 * 	@param	reflection			The desciption of the object extract from
 		 * 								the AS3 reflection API.
-		 * 	@param	metadataRef			The metadata tag considered fon this injection
+		 * 	@param	metadataRef			The metadata tag considered for this injection
 		 * 								of dependecies; must be MetadataConstant.MODEL
 		 * 								MetadataConstant.CONTROLLER or MetadataConstant.SERVICE.
 		 * 	@param	type				The MVC markup interface for this object.

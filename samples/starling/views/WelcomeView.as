@@ -26,7 +26,7 @@ package views {
 	
 	public class WelcomeView extends AbstractStarlingSpriteView implements IGameView {
 		
-		[Model(alias="ViewsController")]
+		[Controller(alias="ViewsController")]
 		public var viewsController:IViewsController;
 		
 		public function initialize():void {

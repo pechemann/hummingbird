@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.events {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.1, 20/05/2013 16:25
+	 *  @version 1.0.2, 26/05/2013 12:14
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -87,9 +87,8 @@ package org.flashapi.hummingbird.events {
 		public var data:Object;
 		
 		/**
-		 * 	The <code>message</code> property allos you to pass a information message
-		 * 	to the event. This property can be used to return error messagess when 
-		 * 	the service transaction has failed.
+		 * 	The <code>message</code> property allows you to pass an information message
+		 * 	to the event.
 		 * 
 		 * 	@default null
 		 */
@@ -103,6 +102,14 @@ package org.flashapi.hummingbird.events {
 		 * 	@default null
 		 */
 		public var operationId:Object;
+		
+		/**
+		 * 	The <code>error</code> property allows you to pass error information,
+		 * 	returned by a remote servic,e to the event.
+		 * 
+		 * 	@default null
+		 */
+		public var error:Object;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -169,6 +176,7 @@ package org.flashapi.hummingbird.events {
 			var evt:ServiceEvent =  new ServiceEvent(this.type, this.bubbles, this.cancelable);
 			evt.data = this.data;
 			evt.message = this.message;
+			evt.error = this.error;
 			evt.operationId = this.operationId;
 			return evt;
 		}
@@ -177,7 +185,12 @@ package org.flashapi.hummingbird.events {
 		 * 	@private
 		 */
 		override public function toString():String {
-			return this.formatToString("ServiceEvent", "type", "bubbles", "cancelable", "data", "message", "operationId");
+			return this.formatToString("ServiceEvent", "type", "bubbles", "cancelable",
+				"data",
+				"message",
+				"operationId",
+				"error"
+			);
 		}
 	}
 }

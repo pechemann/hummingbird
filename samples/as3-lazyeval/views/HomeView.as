@@ -29,7 +29,7 @@ package views {
 		[Model(alias="AppModel")]
 		public var appModel:IAppModel;
 		
-		[Controller(alias="HomeModel")]
+		[Model(alias="HomeModel")]
 		public var homeModel:IHomeModel;
 		
 		[Controller(alias="AppController")]
