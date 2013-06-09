@@ -47,7 +47,7 @@ package org.flashapi.hummingbird.core {
 	import flash.utils.ByteArray;
 	
 	/**
-	 *	 Class that exposes the Hummingbird version. Fetches the "implementation-version"
+	 *	Class that exposes the Hummingbird version. Fetches the "implementation-version"
 	 *  manifest attribute from the SWC file.
 	 */
 	public class HummingbirdVersion {
@@ -74,11 +74,11 @@ package org.flashapi.hummingbird.core {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Returns the full version string of the present Hummingbird codebase.
+		 * 	Returns the full release string of the present Hummingbird codebase.
 		 * 
-		 * 	@return The full version string of the present Hummingbird codebase.
+		 * 	@return The full release string of the present Hummingbird codebase.
 		 */
-		public function getVersion():String {
+		public function getRelease():String {
 			var r:Array = this.extractImplementationVersion();
 			return r[0];
 		}
