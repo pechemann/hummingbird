@@ -95,6 +95,19 @@ package org.flashapi.hummingbird.core {
 			return new Date(time);
 		}
 		
+		/**
+		 * 	Returns the string representation of the present Hummingbird codebase.
+		 * 
+		 * 	@return	 The string representation of the present Hummingbird codebase.
+		 */
+		public function toString():String {
+			var s:String	= 	"[object HummingbirdVersion: "
+							+	"release=" + this.getRelease()
+							+	", date=" + this.getReleaseDate()
+							+	"]";
+			return s;
+		}
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Private properties
