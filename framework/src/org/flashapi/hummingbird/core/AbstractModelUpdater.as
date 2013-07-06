@@ -32,19 +32,20 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.controller {
+package org.flashapi.hummingbird.core {
 	
 	// -----------------------------------------------------------
-	//  AbstractController.as
+	//  AbstractModelUpdater.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 05/07/2013 20:04
+	 *  @version 1.0.0, 05/07/2013 20:02
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import org.flashapi.hummingbird.core.AbstractModelUpdater;
+	import flash.events.EventDispatcher;
+	import org.flashapi.hummingbird.events.DependencyEvent;
 	
 	//--------------------------------------------------------------------------
 	//
@@ -53,7 +54,7 @@ package org.flashapi.hummingbird.controller {
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *  Dispatched when the dependency injection is complete on this <code>IController</code>
+	 *  Dispatched when the dependency injection is complete on this <code>AbstractModelUpdater</code>
 	 * 	object.
 	 *
 	 *  @eventType org.flashapi.hummingbird.events.DependencyEvent.DEPENDENCY_COMPLETE
@@ -61,9 +62,13 @@ package org.flashapi.hummingbird.controller {
 	[Event(name="dependencyComplete", type="org.flashapi.hummingbird.events.DependencyEvent")]
 	
 	/**
-	 * 	Convenient superclass for controller implementations.
+	 * 	Abstract class for <code>IController</code> and <code>IOrchestrator</code>
+	 * 	implementations.
+	 * 
+	 * 	@see org.flashapi.hummingbird.controller.IController
+	 * 	@see org.flashapi.hummingbird.orchestrator.IOrchestrator
 	 */
-	public class AbstractController extends AbstractModelUpdater implements IController {
+	public class AbstractModelUpdater extends EventDispatcher {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -72,10 +77,56 @@ package org.flashapi.hummingbird.controller {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>AbstractController</code> instance.
+		 *  Constructor. 	Creates a new <code>AbstractModelUpdater</code> instance.
 		 */
-		public function AbstractController() {
+		public function AbstractModelUpdater() {
 			super();
+			this.initObj();
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@copy org.flashapi.hummingbird.core.IFinalizable#finalize()
+		 */
+		public function finalize():void { }
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Protected methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Called when the Dependency Injection process is completely performed on
+		 * 	this MVC object.
+		 */
+		protected function onDependencyComplete():void { }
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Initializes this MVC object.
+		 */
+		private function initObj():void {
+			this.addEventListener(DependencyEvent.DEPENDENCY_COMPLETE, this.dependencyCompleteHandler);
+		}
+		
+		/**
+		 * 	Event handler invoked when the Dependency Injection process is completely 
+		 * 	performed on this MVC object.
+		 */
+		private function dependencyCompleteHandler(e:DependencyEvent):void {
+			this.removeEventListener(DependencyEvent.DEPENDENCY_COMPLETE, this.dependencyCompleteHandler);
+			this.onDependencyComplete();
 		}
 	}
 }

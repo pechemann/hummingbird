@@ -32,49 +32,50 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.utils {
+package org.flashapi.hummingbird.orchestrator {
 	
 	// -----------------------------------------------------------
-	//  InterfaceReference.as
+	//  AbstractOrchestrator.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 05/07/2013 21:57
+	 *  @version 1.0.0, 05/07/2013 20:10
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import org.flashapi.hummingbird.core.AbstractModelUpdater;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Events
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
-	 *  The <code>InterfaceReference</code> class is an enumeration of constant 
-	 * 	values that specify the reference of the MVC interfaces used by the Hummingbird
-	 * 	framework.
+	 *  Dispatched when the dependency injection is complete on this <code>IOrchestrator</code>
+	 * 	object.
+	 *
+	 *  @eventType org.flashapi.hummingbird.events.DependencyEvent.DEPENDENCY_COMPLETE
 	 */
-	public class InterfaceReference {
+	[Event(name="dependencyComplete", type="org.flashapi.hummingbird.events.DependencyEvent")]
+	
+	/**
+	 * 	Convenient superclass for orchestrator implementations.
+	 */
+	public class AbstractOrchestrator extends AbstractModelUpdater implements IOrchestrator {
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public constants
+		//  Constructor
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Represents the <code>IService</code> interface reference.
+		 *  Constructor. 	Creates a new <code>AbstractOrchestrator</code> instance.
 		 */
-		public static const SERVICE:String = "org.flashapi.hummingbird.service::IService";
-		
-		/**
-		 * 	Represents the <code>IModel</code> interface reference.
-		 */
-		public static const MODEL:String = "org.flashapi.hummingbird.model::IModel";
-		
-		/**
-		 * 	Represents the <code>IController</code> interface reference.
-		 */
-		public static const CONTROLLER:String = "org.flashapi.hummingbird.controller::IController";
-		
-		/**
-		 * 	Represents the <code>IOrchestrator</code> interface reference.
-		 */
-		public static const ORCHESTRATOR:String = "org.flashapi.hummingbird.orchestrator::IOrchestrator";
+		public function AbstractOrchestrator() {
+			super();
+		}
 	}
 }

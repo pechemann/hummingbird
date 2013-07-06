@@ -32,24 +32,28 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.utils {
+package org.flashapi.hummingbird.enum {
 	
 	// -----------------------------------------------------------
-	//  InterfaceReference.as
+	//  MetadataReferenceEnum.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 05/07/2013 21:57
+	 *  @version 1.0.0, 05/07/2013 22:21
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import org.flashapi.hummingbird.utils.InterfaceReference;
+	import org.flashapi.hummingbird.utils.MetadataConstant;
+	import org.flashapi.hummingbird.utils.MetadataReference;
+	
 	/**
-	 *  The <code>InterfaceReference</code> class is an enumeration of constant 
-	 * 	values that specify the reference of the MVC interfaces used by the Hummingbird
-	 * 	framework.
+	 *  The <code>MetadataReferenceEnum</code> enumeration provides constant 
+	 * 	values that specify the matching between the reference of the MVC interfaces
+	 *  and the metadata used by the Hummingbird framework.
 	 */
-	public class InterfaceReference {
+	public class MetadataReferenceEnum {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -58,23 +62,31 @@ package org.flashapi.hummingbird.utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Represents the <code>IService</code> interface reference.
+		 * 	Represents the <code>Service</code> metadata reference.
 		 */
-		public static const SERVICE:String = "org.flashapi.hummingbird.service::IService";
+		public static const SERVICE:MetadataReference = new MetadataReference(
+			MetadataConstant.SERVICE, InterfaceReference.SERVICE
+		);
 		
 		/**
-		 * 	Represents the <code>IModel</code> interface reference.
+		 * 	Represents the <code>Model</code> metadata reference.
 		 */
-		public static const MODEL:String = "org.flashapi.hummingbird.model::IModel";
+		public static const MODEL:MetadataReference = new MetadataReference(
+			MetadataConstant.MODEL, InterfaceReference.MODEL
+		);
 		
 		/**
-		 * 	Represents the <code>IController</code> interface reference.
+		 * 	Represents the <code>Controller</code> metadata reference.
 		 */
-		public static const CONTROLLER:String = "org.flashapi.hummingbird.controller::IController";
+		public static const CONTROLLER:MetadataReference = new MetadataReference(
+			MetadataConstant.CONTROLLER, InterfaceReference.CONTROLLER
+		);
 		
 		/**
-		 * 	Represents the <code>IOrchestrator</code> interface reference.
+		 * 	Represents the <code>Orchestrator</code> metadata reference.
 		 */
-		public static const ORCHESTRATOR:String = "org.flashapi.hummingbird.orchestrator::IOrchestrator";
+		public static const ORCHESTRATOR:MetadataReference = new MetadataReference(
+			MetadataConstant.ORCHESTRATOR, InterfaceReference.ORCHESTRATOR
+		);
 	}
 }

@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.utils {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 05/07/2013 20:18
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -70,6 +70,11 @@ package org.flashapi.hummingbird.utils {
 		 * 	Represents the <code>Controller</code> metadata.
 		 */
 		public static const CONTROLLER:String = "Controller";
+		
+		/**
+		 * 	Represents the <code>Orchestrator</code> metadata.
+		 */
+		public static const ORCHESTRATOR:String = "Orchestrator";
 		
 		/**
 		 * 	Represents the <code>Service</code> metadata.

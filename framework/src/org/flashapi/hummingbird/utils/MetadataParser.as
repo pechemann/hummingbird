@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.utils {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.1.0, 05/07/2013 20:39
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -49,9 +49,11 @@ package org.flashapi.hummingbird.utils {
 	import flash.utils.getDefinitionByName;
 	import org.flashapi.hummingbird.controller.IController;
 	import org.flashapi.hummingbird.core.IApplicationContext;
+	import org.flashapi.hummingbird.enum.MetadataReferenceEnum;
 	import org.flashapi.hummingbird.events.DependencyEvent;
 	import org.flashapi.hummingbird.exceptions.MetadataException;
 	import org.flashapi.hummingbird.model.IModel;
+	import org.flashapi.hummingbird.orchestrator.IOrchestrator;
 	import org.flashapi.hummingbird.service.IService;
 	import org.flashapi.hummingbird.view.IStarlingView;
 	import org.flashapi.hummingbird.view.IView;
@@ -263,30 +265,41 @@ package org.flashapi.hummingbird.utils {
 		 */
 		private static function injectDependencies(obj:Object, singletonInstances:Dictionary):void {
 			var reflection:XML = describeType(obj);
-			//--> Model objects must be created before controller objects:
+			//--> Model objects must be created before controller and orchestrator objects:
 			if (obj is IStarlingView) {
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.CONTROLLER);
+				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IStarlingView");
 				obj.dispatchEvent(new MetadataParser.StarlingEventRef(MetadataParser.StarlingEventRef.DEPENDENCY_COMPLETE));
 			} else if (obj is IView) {
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.CONTROLLER);
+				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IView");
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
 			} else if (obj is IApplicationContext) {
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.CONTROLLER);
+				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IApplicationContext");
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
 			} else if (obj is IController) {
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.SERVICE);
+				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, "IController");
+				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
+			} else if (obj is IOrchestrator) {
+				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, "IOrchestrator");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IOrchestrator");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, "IOrchestrator");
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
 			} else {
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.MODEL, "IModel");
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, "IModel");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, "IModel");
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IModel");
 			}
 		}
@@ -350,6 +363,9 @@ package org.flashapi.hummingbird.utils {
 			} else if (metadataRef == MetadataConstant.CONTROLLER) {
 				isValid = Boolean(obj is IController);
 				expectactedValue = MetadataConstant.CONTROLLER;
+			} else if (metadataRef == MetadataConstant.ORCHESTRATOR) {
+				isValid = Boolean(obj is IOrchestrator);
+				expectactedValue = MetadataConstant.ORCHESTRATOR;
 			} else if (metadataRef == MetadataConstant.SERVICE) {
 				isValid = Boolean(obj is IService);
 				expectactedValue = MetadataConstant.SERVICE;
@@ -361,7 +377,7 @@ package org.flashapi.hummingbird.utils {
 					.message(metadataRef, " '", "'")
 					.message(alias, " on '","'")
 					.dot()
-					.expected(MetadataParser.getFoundInterface(obj), " ")
+					.expected(MetadataParser.getMetadataFromInterface(obj), " ")
 					.dot()
 					.build()
 				);
@@ -370,39 +386,27 @@ package org.flashapi.hummingbird.utils {
 		
 		/**
 		 * 	@private
-		 * 	Returns the MVC interface implemented by the specified MVC object.
+		 * 	Returns the expected MVC metadata retreived from the interface implemented
+		 *  by the specified MVC object.
 		 * 
-		 * 	@param	obj	The MVC object for which to find the MVC interface.
+		 * 	@param	obj	The MVC object for which to find the MVC interface and metadata.
 		 * 	
-		 * 	@return	The MVC interface implemented by the specified MVC object.
+		 * 	@return	A MVC metadata reference.
 		 */
-		private static function getFoundInterface(obj:Object):String {
+		private static function getMetadataFromInterface(obj:Object):String {
 			var reflection:XML = describeType(obj);
 			var interfaces:XMLList = reflection..implementsInterface;
-			var interfaceDeclaration:String
-			if (interfaces.(@type == InterfaceReference.CONTROLLER) != null) {
-				interfaceDeclaration =
-					MetadataParser.getInterfaceRef(InterfaceReference.CONTROLLER);
-			} else if (interfaces.(@type == InterfaceReference.MODEL) != null) {
-				interfaceDeclaration =
-					MetadataParser.getInterfaceRef(InterfaceReference.MODEL);
-			} else if (interfaces.(@type == InterfaceReference.CONTROLLER) != null) {
-				interfaceDeclaration =
-					MetadataParser.getInterfaceRef(InterfaceReference.CONTROLLER);
+			var interfaceDeclaration:String;
+			if (interfaces.(@type == MetadataReferenceEnum.CONTROLLER.interfaceReference) != null) {
+				interfaceDeclaration = MetadataReferenceEnum.CONTROLLER.metadataReference;
+			} else if (interfaces.(@type == MetadataReferenceEnum.MODEL.interfaceReferenc) != null) {
+				interfaceDeclaration = MetadataReferenceEnum.MODEL.metadataReference;
+			} else if (interfaces.(@type == MetadataReferenceEnum.CONTROLLER.interfaceReferenc) != null) {
+				interfaceDeclaration = MetadataReferenceEnum.CONTROLLER.metadataReference;
+			} else if (interfaces.(@type == MetadataReferenceEnum.ORCHESTRATOR.interfaceReferenc) != null) {
+				interfaceDeclaration = MetadataReferenceEnum.ORCHESTRATOR.metadataReference;
 			}
 			return interfaceDeclaration;
-		}
-		
-		/**
-		 * 	@private
-		 * 	Returns the name of a MVC interface stripped from its package names.
-		 * 
-		 * 	@param	interfaceRef	The fully qualified interface name.
-		 * 	
-		 * 	@return	 The name of a MVC interface stripped from its package names.
-		 */
-		private static function getInterfaceRef(interfaceRef:String):String {
-			return interfaceRef.substr(interfaceRef.lastIndexOf(":") + 1);
 		}
 		
 		/**

@@ -32,49 +32,26 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.utils {
+package org.flashapi.hummingbird.orchestrator {
 	
 	// -----------------------------------------------------------
-	//  InterfaceReference.as
+	//  IController.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 05/07/2013 21:57
+	 *  @version 1.0.0, 05/07/2013 20:11
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import flash.events.IEventDispatcher;
+	import org.flashapi.hummingbird.core.IMVCObject;
+	
 	/**
-	 *  The <code>InterfaceReference</code> class is an enumeration of constant 
-	 * 	values that specify the reference of the MVC interfaces used by the Hummingbird
-	 * 	framework.
+	 *  Base Orchestrator interface, representing a component that sends
+	 * 	sends commands to the model for updating the model's state and 
+	 * 	receives notifications from the model for listening updates from
+	 * 	Controller, or other Orchestrator objects.
 	 */
-	public class InterfaceReference {
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Public constants
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	Represents the <code>IService</code> interface reference.
-		 */
-		public static const SERVICE:String = "org.flashapi.hummingbird.service::IService";
-		
-		/**
-		 * 	Represents the <code>IModel</code> interface reference.
-		 */
-		public static const MODEL:String = "org.flashapi.hummingbird.model::IModel";
-		
-		/**
-		 * 	Represents the <code>IController</code> interface reference.
-		 */
-		public static const CONTROLLER:String = "org.flashapi.hummingbird.controller::IController";
-		
-		/**
-		 * 	Represents the <code>IOrchestrator</code> interface reference.
-		 */
-		public static const ORCHESTRATOR:String = "org.flashapi.hummingbird.orchestrator::IOrchestrator";
-	}
+	public interface IOrchestrator extends IEventDispatcher, IMVCObject { }
 }
