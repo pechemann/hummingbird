@@ -32,28 +32,23 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.enum {
+package org.flashapi.hummingbird.utils.constants {
 	
 	// -----------------------------------------------------------
-	//  MetadataReferenceEnum.as
+	//  ManifestInfoProperty.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 05/07/2013 22:21
+	 *  @version 1.0.0, 14/07/2013 16:54
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import org.flashapi.hummingbird.utils.constants.InterfaceReference;
-	import org.flashapi.hummingbird.utils.constants.MetadataConstant;
-	import org.flashapi.hummingbird.utils.MetadataReference;
-	
 	/**
-	 *  The <code>MetadataReferenceEnum</code> enumeration provides constant 
-	 * 	values that specify the matching between the reference of the MVC interfaces
-	 *  and the metadata used by the Hummingbird framework.
+	 *  The <code>ManifestConstant</code> class is an enumeration of constant values
+	 * 	that specify the properties of the Hummingbird <code>MANIFEST.MF</code> file.
 	 */
-	public class MetadataReferenceEnum {
+	public class ManifestInfoProperty {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -62,31 +57,43 @@ package org.flashapi.hummingbird.enum {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Represents the <code>Service</code> metadata reference.
+		 * 	Represents the <code>ManifestInfo.manifestVersion</code> property.
 		 */
-		public static const SERVICE:MetadataReference = new MetadataReference(
-			MetadataConstant.SERVICE, InterfaceReference.SERVICE
-		);
+		public static const MANIFEST_VERSION:String = "manifestVersion";
 		
 		/**
-		 * 	Represents the <code>Model</code> metadata reference.
+		 * 	Represents the <code>ManifestInfo.name</code> property.
 		 */
-		public static const MODEL:MetadataReference = new MetadataReference(
-			MetadataConstant.MODEL, InterfaceReference.MODEL
-		);
+		public static const NAME:String = "name";
 		
 		/**
-		 * 	Represents the <code>Controller</code> metadata reference.
+		 * 	Represents the <code>ManifestInfo.specificationTitle</code> property.
 		 */
-		public static const CONTROLLER:MetadataReference = new MetadataReference(
-			MetadataConstant.CONTROLLER, InterfaceReference.CONTROLLER
-		);
+		public static const SPECIFICATION_TITLE:String = "specificationTitle";
 		
 		/**
-		 * 	Represents the <code>Orchestrator</code> metadata reference.
+		 * 	Represents the <code>ManifestInfo.specificationVersion</code> property.
 		 */
-		public static const ORCHESTRATOR:MetadataReference = new MetadataReference(
-			MetadataConstant.ORCHESTRATOR, InterfaceReference.ORCHESTRATOR
-		);
+		public static const SPECIFICATION_VERSION:String = "specificationVersion";
+		
+		/**
+		 * 	Represents the <code>ManifestInfo.specificationVendor</code> property.
+		 */
+		public static const SPECIFICATION_VENDOR:String = "specificationVendor";
+		
+		/**
+		 * 	Represents the <code>ManifestInfo.implementationTitle</code> property.
+		 */
+		public static const IMPLEMENTATION_TITLE:String = "implementationTitle";
+		
+		/**
+		 * 	Represents the <code>ManifestInfo.implementationVersion</code> property.
+		 */
+		public static const IMPLEMENTATION_VERSION:String = "implementationVersion";
+		
+		/**
+		 * 	Represents the <code>ManifestInfo.implementationVendor</code> property.
+		 */
+		public static const IMPLEMENTATION_VENDOR:String = "implementationVendor";
 	}
 }

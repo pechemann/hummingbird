@@ -55,6 +55,7 @@ package org.flashapi.hummingbird.utils {
 	import org.flashapi.hummingbird.model.IModel;
 	import org.flashapi.hummingbird.orchestrator.IOrchestrator;
 	import org.flashapi.hummingbird.service.IService;
+	import org.flashapi.hummingbird.utils.constants.MetadataConstant;
 	import org.flashapi.hummingbird.view.IStarlingView;
 	import org.flashapi.hummingbird.view.IView;
 	

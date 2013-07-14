@@ -32,27 +32,26 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.core {
+package org.flashapi.hummingbird.utils {
 	
 	// -----------------------------------------------------------
-	//  HummingbirdVersion.as
+	//  ManifestReference.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 2.0.0, 28/04/2013 10:36
+	 *  @version 1.0.0, 05/07/2013 22:24
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import flash.utils.ByteArray;
-	import org.flashapi.hummingbird.utils.ManifestInfo;
-	import org.flashapi.hummingbird.utils.ManifestParser;
-	
 	/**
-	 *	Class that exposes the Hummingbird version. Fetches the "implementation-version"
-	 *  manifest attribute from the SWC file.
+	 *  <code>ManifestReference</code> objects are used by the <code>ManifestReferenceEnum</code>
+	 * 	class to associate a property of the <code>ManifestInfo</code> class to the
+	 * 	corresponding value in the Hummingbird <code>MANIFEST.MF</code> file.
+	 * 
+	 * 	@see org.flashapi.hummingbird.enum.ManifestReferenceEnum
 	 */
-	public class HummingbirdVersion {
+	public class ManifestReference {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -61,50 +60,44 @@ package org.flashapi.hummingbird.core {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>HummingbirdVersion</code>
-		 * 					instance.
+		 *  Constructor. 	Creates a new <code>ManifestReference</code> instance
+		 * 					with the specified properties.
+		 * 
+		 * 	@param manifestReference	The reference to a manifest property as defined
+		 * 								by the <code>ManifestConstant</code> class.
+		 * 	@param manifestInfoProperty	The reference to <code>ManifestInfo</code>
+		 * 								property as defined by the <code>ManifestInfoProperty</code>
+		 * 								class.
 		 */
-		public function HummingbirdVersion() {
+		public function ManifestReference(manifestReference:String, manifestInfoProperty:String) {
 			super();
-			this.initObj();
+			this.initObj(manifestReference, manifestInfoProperty);
 		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public methods
+		//  Getter properties
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Returns the full release string of the present Hummingbird codebase.
+		 * 	Returns reference to a manifest property as defined by the
+		 * 	<code>ManifestConstant</code> class.
 		 * 
-		 * 	@return The full release string of the present Hummingbird codebase.
+		 * 	@see org.flashapi.hummingbird.utils.constants.ManifestConstant
 		 */
-		public function getRelease():String {
-			return _manifestInf.specificationVersion;
+		public function get manifestReference():String {
+			return _manifestReference;
 		}
 		
 		/**
-		 * 	Returns a <code>Date</code> object that represents the release date of
-		 * 	the present Hummingbird codebase.
+		 * 	Returns the reference to a metadata tag as defined by the
+		 * 	<code>ManifestInfoProperty</code> class.
 		 * 
-		 * 	@return The release date of the present Hummingbird codebase.
+		 * 	@see org.flashapi.hummingbird.utils.constants.ManifestInfoProperty
 		 */
-		public function getReleaseDate():Date {
-			return _manifestInf.specificationDate;
-		}
-		
-		/**
-		 * 	Returns the string representation of the present Hummingbird codebase.
-		 * 
-		 * 	@return	 The string representation of the present Hummingbird codebase.
-		 */
-		public function toString():String {
-			var s:String	= 	"[object HummingbirdVersion: "
-							+	"release=" + this.getRelease()
-							+	", date=" + this.getReleaseDate()
-							+	"]";
-			return s;
+		public function get manifestInfoProperty():String {
+			return _manifestInfoProperty;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -115,19 +108,19 @@ package org.flashapi.hummingbird.core {
 		
 		/**
 		 * 	@private
-		 * 
-		 * 	The embeded MANIFEST.MF file.
+		 * 	
+		 * 	The reference to a metadata tag as defined by the <code>ManifestConstant</code>
+		 * 	class.
 		 */
-		[Embed(source="../../../../META-INF/MANIFEST.MF", mimeType="application/octet-stream")]
-		private static const MANIFEST:Class;
+		private var _manifestReference:String;
 		
 		/**
 		 * 	@private
-		 * 
-		 * 	The reference to the <code>ManifestInfo</code> object that contains all 
-		 * 	the information specified by the Hummingbird <code>MANIFEST.MF</code> file.
+		 * 	
+		 * 	The reference to a MVC interface as defined by the <code>ManifestInfoProperty</code>
+		 * 	class.
 		 */
-		private var _manifestInf:ManifestInfo;
+		private var _manifestInfoProperty:String;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -137,13 +130,12 @@ package org.flashapi.hummingbird.core {
 		
 		/**
 		 * 	@private
-		 * 
-		 * 	Initializes this <code>HummingbirdVersion</code> instance.
+		 * 	
+		 * 	Initializes this <code>ManifestReference</code> instance.
 		 */
-		private function initObj():void {
-			var ba:ByteArray = new MANIFEST();
-			var manifest:String = ba.readUTFBytes(ba.length);
-			_manifestInf = ManifestParser.parse(manifest);
+		private function initObj(manifestReference:String, manifestInfoProperty:String):void {
+			_manifestReference = manifestReference;
+			_manifestInfoProperty = manifestInfoProperty;
 		}
 	}
 }

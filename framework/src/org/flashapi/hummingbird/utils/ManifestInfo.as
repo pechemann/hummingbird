@@ -32,27 +32,23 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.core {
+package org.flashapi.hummingbird.utils {
 	
 	// -----------------------------------------------------------
-	//  HummingbirdVersion.as
+	//  ManifestInfo.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 2.0.0, 28/04/2013 10:36
+	 *  @version 1.0.0, 14/07/2013 16:00
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import flash.utils.ByteArray;
-	import org.flashapi.hummingbird.utils.ManifestInfo;
-	import org.flashapi.hummingbird.utils.ManifestParser;
-	
 	/**
-	 *	Class that exposes the Hummingbird version. Fetches the "implementation-version"
-	 *  manifest attribute from the SWC file.
+	 * 	The <code>ManifestInfo</code> class contains all the information specified
+	 * 	in the Hummingbird <code>MANIFEST.MF</code> file.
 	 */
-	public class HummingbirdVersion {
+	public class ManifestInfo {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -61,89 +57,89 @@ package org.flashapi.hummingbird.core {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>HummingbirdVersion</code>
-		 * 					instance.
+		 *  Constructor. 	Creates a new <code>ManifestInfo</code> instance.
 		 */
-		public function HummingbirdVersion() {
+		public function ManifestInfo() {
 			super();
-			this.initObj();
 		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public methods
+		//  Public properties
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Returns the full release string of the present Hummingbird codebase.
-		 * 
-		 * 	@return The full release string of the present Hummingbird codebase.
+		 * 	The name of the specification
 		 */
-		public function getRelease():String {
-			return _manifestInf.specificationVersion;
-		}
+		public var manifestVersion:String;
 		
 		/**
-		 * 	Returns a <code>Date</code> object that represents the release date of
-		 * 	the present Hummingbird codebase.
-		 * 
-		 * 	@return The release date of the present Hummingbird codebase.
+		 * 	The name of the specification
 		 */
-		public function getReleaseDate():Date {
-			return _manifestInf.specificationDate;
-		}
+		public var name:String;
 		
 		/**
-		 * 	Returns the string representation of the present Hummingbird codebase.
+		 * 	The title of the specification.
+		 */
+		public var specificationTitle:String;
+		
+		/**
+		 * 	The version of the specification.
+		 */
+		public var specificationVersion:String;
+		
+		/**
+		 * 	The publication date of the specification.
+		 */
+		public var specificationDate:Date;
+		
+		/**
+		 * 	The vendor of the specification.
+		 */
+		public var specificationVendor:String;
+		
+		/**
+		 * 	The title of the implementation.
+		 */
+		public var implementationTitle:String;
+		
+		/**
+		 * 	The build number of the implementation.
+		 */
+		public var implementationVersion:String;
+		
+		/**
+		 * 	The vendor of the implementation.
+		 */
+		public var implementationVendor:String;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Returns the string representation of the Hummingbird <code>MANIFEST.MF</code>
+		 * 	file.
 		 * 
-		 * 	@return	 The string representation of the present Hummingbird codebase.
+		 * 	@return	 The string representation of the Hummingbird <code>MANIFEST.MF</code>
+		 * 			file.
 		 */
 		public function toString():String {
-			var s:String	= 	"[object HummingbirdVersion: "
-							+	"release=" + this.getRelease()
-							+	", date=" + this.getReleaseDate()
+			var s:String	= 	"[object ManifestInfo: "
+							+	"manifestVersion=" + this.manifestVersion
+							+	", name=" + this.name
+							+	", specificationTitle=" + this.specificationTitle
+							+	", specificationVersion=" + this.specificationVersion
+							+	", specificationDate=" + this.specificationDate
+							+	", specificationVendor=" + this.specificationVendor
+							+	", implementationTitle=" + this.implementationTitle
+							+	", implementationVersion=" + this.implementationVersion
+							+	", implementationVendor=" + this.implementationVendor
 							+	"]";
 			return s;
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	The embeded MANIFEST.MF file.
-		 */
-		[Embed(source="../../../../META-INF/MANIFEST.MF", mimeType="application/octet-stream")]
-		private static const MANIFEST:Class;
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	The reference to the <code>ManifestInfo</code> object that contains all 
-		 * 	the information specified by the Hummingbird <code>MANIFEST.MF</code> file.
-		 */
-		private var _manifestInf:ManifestInfo;
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private methods
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	Initializes this <code>HummingbirdVersion</code> instance.
-		 */
-		private function initObj():void {
-			var ba:ByteArray = new MANIFEST();
-			var manifest:String = ba.readUTFBytes(ba.length);
-			_manifestInf = ManifestParser.parse(manifest);
 		}
 	}
 }

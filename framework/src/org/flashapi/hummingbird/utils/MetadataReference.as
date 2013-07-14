@@ -82,7 +82,7 @@ package org.flashapi.hummingbird.utils {
 		 * 	Returns the reference to a MVC interface as defined by the
 		 * 	<code>InterfaceReference</code> class.
 		 * 
-		 * 	@see org.flashapi.hummingbird.utils.MetadataReference
+		 * 	@see org.flashapi.hummingbird.utils.constants.MetadataReference
 		 */
 		public function get metadataReference():String {
 			return _metadataReference;
@@ -92,7 +92,7 @@ package org.flashapi.hummingbird.utils {
 		 * 	Returns the reference to a metadata tag as defined by the
 		 * 	<code>MetadataConstant</code> class.
 		 * 
-		 * 	@see org.flashapi.hummingbird.utils.InterfaceReference
+		 * 	@see org.flashapi.hummingbird.utils.constants.InterfaceReference
 		 */
 		public function get interfaceReference():String {
 			return _interfaceReference;
