@@ -13,7 +13,10 @@
 
 package ui {
 	
+	/**
+	 * 	A convenient class for embeding assets within your application.
+	 */
 	public class Assets {
-		
+		// TODO Auto-generated method stub
 	}
 }

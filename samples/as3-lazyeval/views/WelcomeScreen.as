@@ -26,7 +26,7 @@ package views {
 		[Model(alias="AppModel")]
 		public var model:IAppModel;
 		
-		[Model(alias="AppController")]
+		[Controller(alias="AppController")]
 		public var controller:IAppController;
 		
 		override protected function onDependencyComplete():void {

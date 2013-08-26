@@ -19,13 +19,41 @@ package application {
 	import org.flashapi.hummingbird.view.IView;
 	import views.HelloWorldScreen;
 	
+	/**
+	 * 	The <code>AppContext</code> class is the starting of the MVC process in the
+	 * 	Hummingbird Framework.
+	 */
 	public class AppContext extends AbstractApplicationContext {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Dependencies includes
+		//
+		//--------------------------------------------------------------------------
 		
 		include "dependencies.as"
 		
+		//--------------------------------------------------------------------------
+		//
+		//  Public properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	A reference to the default controller of your application.
+		 */
 		[Controller(alias="AppController")]
 		public var controller:IAppController;
 		
+		//--------------------------------------------------------------------------
+		//
+		//  Public methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@inheritDoc
+		 */
 		override public function start():void {
 			var view:IView = HummingbirdAS.getFactory().createView(HelloWorldScreen);
 			HummingbirdAS.addToScene(view);

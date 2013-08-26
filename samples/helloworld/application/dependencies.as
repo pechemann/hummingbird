@@ -11,11 +11,19 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
+//--> Dependencies includes: 
+//			add herer all the dependencies which are not concerned by a lazy evaluation.
 import controllers.AppController;
 import models.AppModel;
 
+/**
+ * 	The class reference for the default model of the application.
+ */
 [RegisterClass(type="models.AppModel")]
 public var appModelRef:Class = AppModel;
 
+/**
+ * 	The class reference for the default controller of the application.
+ */
 [RegisterClass(type="controllers.AppController")]
 public var appControllerRef:Class = AppController;
