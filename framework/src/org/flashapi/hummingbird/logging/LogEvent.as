@@ -32,25 +32,25 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.events {
+package org.flashapi.hummingbird.logging {
 	
 	// -----------------------------------------------------------
-	//  ServiceEvent.as
+	//  LogEvent.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.2, 26/05/2013 12:14
+	 *  @version 1.0.0, 06/10/2013 18:12
 	 *  @see http://www.flashapi.org/
 	 */
 	
 	import flash.events.Event;
 	
 	/**
-	 * 	The <code>ServiceEvent</code> class defines built-in events that can be 
-	 * 	dispatched by <code>IService</code> objects.
+	 * 	The <code>LogEvent</code> class defines built-in events that can be 
+	 * 	dispatched <code>ILogger</code> objects.
 	 */
-	public class ServiceEvent extends Event {
+	public class LogEvent extends Event {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -59,7 +59,7 @@ package org.flashapi.hummingbird.events {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>ServiceEvent</code> instance.
+		 *  Constructor. 	Creates a new <code>LogEvent</code> instance.
 		 * 
 		 * 	@param	type		The type of the event, accessible as <code>Event.type</code>.
 		 * 	@param	bubbles		Determines whether the <code>DependencyEvent</code>
@@ -69,7 +69,7 @@ package org.flashapi.hummingbird.events {
 		 * 						object can be canceled. The default values is
 		 * 						<code>false</code>.
 		 */
-		public function ServiceEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false) {
+		public function LogEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false) {
 			super(type, bubbles, cancelable);
 		}
 		
@@ -80,36 +80,17 @@ package org.flashapi.hummingbird.events {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	The <code>data</code> property lets you pass a value to the event.
+		 * 	Provides access to the level for this log event. Valid values are constants
+		 * 	of the <code>LogLevel</code> class.
 		 * 
-		 * 	@default null
+		 * 	@see org.flashapi.hummingbird.logging.LogLevel
 		 */
-		public var data:Object;
+		public var level:uint;
 		
 		/**
-		 * 	The <code>message</code> property allows you to pass an information message
-		 * 	to the event.
-		 * 
-		 * 	@default null
+		 *	Provides access to the message that was logged.
 		 */
 		public var message:String;
-		
-		/**
-		 * 	A convenient property to specify the identifier of the operation, defined
-		 * 	by the service (usually a Web service), responsible for dispatching this
-		 * 	event.
-		 * 
-		 * 	@default null
-		 */
-		public var operationId:Object;
-		
-		/**
-		 * 	The <code>error</code> property allows you to pass error information,
-		 * 	returned by a remote servic,e to the event.
-		 * 
-		 * 	@default null
-		 */
-		public var error:Object;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -118,8 +99,8 @@ package org.flashapi.hummingbird.events {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Defines the value of the type property of the <code>transactionSuccess</code>
-		 * 	event object.
+		 * 	Defines the value of the type property of the <code>log</code> event
+		 * 	object.
 		 * 
 		 *  <p>The properties of the event object have the following values:</p>
 		 *  <table class="innertable">
@@ -136,32 +117,9 @@ package org.flashapi.hummingbird.events {
 		 *       Object listening for the event.</td></tr>
 		 *  </table>
 		 *
-		 *  @eventType transactionSuccess
+		 *  @eventType log
 		 */
-		public static const TRANSACTION_SUCCESS:String = "transactionSuccess";
-		
-		/**
-		 * 	Defines the value of the type property of the <code>transactionError</code>
-		 * 	event object.
-		 * 
-		 *  <p>The properties of the event object have the following values:</p>
-		 *  <table class="innertable">
-		 *     <tr><th>Property</th><th>Value</th></tr>
-		 *     <tr><td><code>bubbles</code></td><td>false</td></tr>
-		 *     <tr><td><code>cancelable</code></td><td>false</td></tr>
-		 *     <tr><td><code>currentTarget</code></td><td>The Object that defines the
-		 *       event listener that handles the event. For example, if you use
-		 *       <code>myButton.addEventListener()</code> to register an event listener,
-		 *       myButton is the value of the <code>currentTarget</code>. </td></tr>
-		 *     <tr><td><code>target</code></td><td>The Object that dispatched the event;
-		 *       it is not always the Object listening for the event.
-		 *       Use the <code>currentTarget</code> property to always access the
-		 *       Object listening for the event.</td></tr>
-		 *  </table>
-		 *
-		 *  @eventType transactionError
-		 */
-		public static const TRANSACTION_ERROR:String = "transactionError";
+		public static const LOG:String = "log";
 		
 		//--------------------------------------------------------------------------
 		//
@@ -173,11 +131,9 @@ package org.flashapi.hummingbird.events {
 		 * 	@private
 		 */
 		override public function clone():Event {
-			var evt:ServiceEvent =  new ServiceEvent(this.type, this.bubbles, this.cancelable);
-			evt.data = this.data;
+			var evt:LogEvent =  new LogEvent(this.type, this.bubbles, this.cancelable);
+			evt.level = this.level;
 			evt.message = this.message;
-			evt.error = this.error;
-			evt.operationId = this.operationId;
 			return evt;
 		}
 		
@@ -185,11 +141,9 @@ package org.flashapi.hummingbird.events {
 		 * 	@private
 		 */
 		override public function toString():String {
-			return this.formatToString("ServiceEvent", "type", "bubbles", "cancelable",
-				"data",
-				"message",
-				"operationId",
-				"error"
+			return this.formatToString("LogEvent", "type", "bubbles", "cancelable",
+				"level",
+				"message"
 			);
 		}
 	}

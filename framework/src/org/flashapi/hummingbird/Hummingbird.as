@@ -40,7 +40,7 @@ package org.flashapi.hummingbird {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 06/10/2013 19:28
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -51,6 +51,7 @@ package org.flashapi.hummingbird {
 	import org.flashapi.hummingbird.events.StarlingDependencyEvent;
 	import org.flashapi.hummingbird.factory.IDefinitionRegistry;
 	import org.flashapi.hummingbird.factory.IFactory;
+	import org.flashapi.hummingbird.logging.ILogger;
 	import org.flashapi.hummingbird.starling.StarlingProperties;
 	import org.flashapi.hummingbird.utils.MetadataParser;
 	import org.flashapi.hummingbird.view.IView;
@@ -213,8 +214,11 @@ package org.flashapi.hummingbird {
 		 * 								the built-in <code>Starling</code> instance.
 		 */
 		private static function initStarling(properties:StarlingProperties):void {
+			var logger:ILogger = HummingbirdBase.getLogger();
+			logger.config("Starling framework initialization");
 			MetadataParser.setStarlingEventRef(StarlingDependencyEvent);
 			if (properties) {
+				logger.config("Starling properties initialization");
 				Hummingbird._starling = new Starling(RootDisplayObject, HummingbirdBase.getStage(),
 					properties.viewPort,
 					properties.stage3D,
@@ -232,6 +236,7 @@ package org.flashapi.hummingbird {
 					showStats = properties.showStats;
 				}
 			} else {
+				logger.config("Starling framework instanciation");
 				Hummingbird._starling = new Starling(RootDisplayObject, HummingbirdBase.getStage());
 			}
 			Hummingbird._starling.addEventListener(Event.ROOT_CREATED, Hummingbird.rootCreatedHandler);
@@ -245,6 +250,7 @@ package org.flashapi.hummingbird {
 		 * 	@param	e	The reference to the triggered event.
 		 */
 		private static function rootCreatedHandler(e:Event):void {
+			HummingbirdBase.getLogger().config("Starling root object created");
 			Hummingbird._starling.removeEventListener(Event.ROOT_CREATED, Hummingbird.rootCreatedHandler);
 			Hummingbird._rootClass = Hummingbird._starling.root as RootDisplayObject;
 			HummingbirdBase.setApplicationContext(Hummingbird._tempAppContext);

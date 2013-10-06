@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.utils {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 05/07/2013 20:39
+	 *  @version 1.1.1, 06/10/2013 19:23
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -48,6 +48,7 @@ package org.flashapi.hummingbird.utils {
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import org.flashapi.hummingbird.controller.IController;
+	import org.flashapi.hummingbird.core.HummingbirdBase;
 	import org.flashapi.hummingbird.core.IApplicationContext;
 	import org.flashapi.hummingbird.enum.MetadataReferenceEnum;
 	import org.flashapi.hummingbird.events.DependencyEvent;
@@ -84,6 +85,7 @@ package org.flashapi.hummingbird.utils {
 		 * 								framework.
 		 */
 		public static function setStarlingEventRef(starlingEventRef:Class):void {
+			HummingbirdBase.getLogger().config("Starling event reference added");
 			MetadataParser.StarlingEventRef = starlingEventRef;
 		}
 		

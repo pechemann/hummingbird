@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 06/10/2013 19:08
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -53,6 +53,8 @@ package org.flashapi.hummingbird.core {
 	import org.flashapi.hummingbird.factory.Factory;
 	import org.flashapi.hummingbird.factory.IDefinitionRegistry;
 	import org.flashapi.hummingbird.factory.IFactory;
+	import org.flashapi.hummingbird.logging.ILogger;
+	import org.flashapi.hummingbird.logging.Logger;
 	import org.flashapi.hummingbird.view.IView;
 	
 	/**
@@ -60,6 +62,21 @@ package org.flashapi.hummingbird.core {
 	 * 	the core of the Hummingbird framework.
 	 */
 	public class HummingbirdBase {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Returns the reference to the Hummingbird framework internal logger.
+		 * 
+		 * 	@return The Hummingbird framework internal logger.
+		 */
+		public static function getLogger():ILogger {
+			return HummingbirdBase.LOGGER;
+		}
 		
 		//--------------------------------------------------------------------------
 		//
@@ -92,6 +109,7 @@ package org.flashapi.hummingbird.core {
 		 * 	@param	stage	A reference to the Flash Player <code>Stage</code> instance.
 		 */
 		protected static function setStage(stage:Stage):void {
+			HummingbirdBase.LOGGER.config("Stage component added");
 			HummingbirdBase._stage = stage;
 		}
 		
@@ -104,6 +122,7 @@ package org.flashapi.hummingbird.core {
 		 */
 		protected static function getFactory():IFactory {
 			if (_factory == null) {
+				HummingbirdBase.LOGGER.config("Factory initialization");
 				_factory = new Factory(HummingbirdContainer);
 			}
 			return _factory;
@@ -118,6 +137,7 @@ package org.flashapi.hummingbird.core {
 		 */
 		protected static function getDefinitionRegistry():IDefinitionRegistry {
 			if (_definitionRegistry == null) {
+				HummingbirdBase.LOGGER.config("Definition registry initialization");
 				_definitionRegistry = new DefinitionRegistry(HummingbirdContainer);
 			}
 			return _definitionRegistry;
@@ -141,9 +161,24 @@ package org.flashapi.hummingbird.core {
 		/**
 		 * 	@private
 		 * 
+		 * 	The reference to <code>ILogger</code> instance for this Hummingbird
+		 * 	container.
+		 */
+		private static const LOGGER:ILogger = new Logger();
+		
+		/**
+		 * 	@private
+		 * 
 		 * 	The current Hummingbird version.
 		 */
 		private static const VERSION:HummingbirdVersion = new HummingbirdVersion();
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Provides the current Hummingbird version to the logging framework.
+		 */
+		HummingbirdBase.LOGGER.info(VERSION.toString());
 		
 		/**
 		 * 	@private

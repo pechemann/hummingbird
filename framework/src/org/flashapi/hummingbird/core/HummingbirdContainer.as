@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 06/10/2013 19:08
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -49,6 +49,7 @@ package org.flashapi.hummingbird.core {
 	import org.flashapi.hummingbird.core.IMVCObject;
 	import org.flashapi.hummingbird.exceptions.NoSuchDefinitionException;
 	import org.flashapi.hummingbird.exceptions.SingletonException;
+	import org.flashapi.hummingbird.logging.ILogger;
 	import org.flashapi.hummingbird.utils.MetadataParser;
 
 	/**
@@ -69,6 +70,7 @@ package org.flashapi.hummingbird.core {
 		public function HummingbirdContainer() {
 			super();
 			if (INSTANCE) {
+				_logger.fatal("Invalid attempt to access the HummingbirdContainer class constructor");
 				throw new SingletonException("you must use the getInstance() method to access IHummingbirdContainer instances");
 			}
 			this.initObj();
@@ -106,6 +108,7 @@ package org.flashapi.hummingbird.core {
 		 * @inheritDoc
 		 */
 		public function setApplicationContext(applicationContext:IApplicationContext):void {
+			_logger.config("Application context initialization");
 			_applicationContext = applicationContext;
 			this.initApplicationContext();
 		}
@@ -114,6 +117,7 @@ package org.flashapi.hummingbird.core {
 		 * @inheritDoc
 		 */
 		public function doLookup(obj:Object):void {
+			_logger.info("Lookup start on: " + obj);
 			MetadataParser.parseMetadata(obj, _singletonInstances, _singletonReferences);
 		}
 		
@@ -123,6 +127,7 @@ package org.flashapi.hummingbird.core {
 		public function getMVCObject(alias:String):IMVCObject {
 			var obj:IMVCObject =  _singletonInstances[alias];
 			if (obj == null) {
+				_logger.warn("The MVC with the alias alias {0} does not exist!", alias);
 				throw new NoSuchDefinitionException("the alias '" + alias + "' is invalid. It must not be null or empty.");
 			}
 			return obj;
@@ -142,6 +147,13 @@ package org.flashapi.hummingbird.core {
 		//  Privare properties
 		//
 		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	The reference to the Hummingbird logger.
+		 */
+		private var _logger:ILogger;
 		
 		/**
 		 * 	@private
@@ -176,6 +188,8 @@ package org.flashapi.hummingbird.core {
 		 * 	Initializes the IoC container.
 		 */
 		private function initObj():void {
+			_logger = HummingbirdBase.getLogger();
+			_logger.config("Hummingbird container created");
 			_singletonReferences = new Dictionary();
 			_singletonInstances = new Dictionary();
 		}
@@ -186,10 +200,14 @@ package org.flashapi.hummingbird.core {
 		 * 	Initializes the application context.
 		 */
 		private function initApplicationContext():void {
+			_logger.config("Application context before");
 			_applicationContext.before();
 			this.doLookup(_applicationContext);
+			_logger.config("Application context start");
 			_applicationContext.start();
+			_logger.config("Application context after");
 			_applicationContext.after();
+			_logger.config("Application context initialization complete");
 		}
 	}
 }

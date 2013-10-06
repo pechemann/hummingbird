@@ -32,25 +32,27 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.utils {
+package org.flashapi.hummingbird.logging {
 	
 	// -----------------------------------------------------------
-	//  MetadataErrorBuilder.as
+	//  Logger.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.1, 06/10/2013 19:21
+	 *  @version 1.0.0, 06/10/2013 16:35
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import org.flashapi.hummingbird.core.HummingbirdBase;
+	import flash.events.EventDispatcher;
 	
 	/**
-	 * 	You use the <code>MetadataErrorBuilder</code> class for easily building error 
-	 * 	messages from the specified data.
+	 * 	Default implementation of the <code>ILogger</code> interface. The
+	 * 	<code>Logger</code> class represents the logger that is used within the
+	 * 	Hummingbird framework. This class dispatches events for each message
+	 * 	logged using the methods defined by the <code>ILogger</code> interface.
 	 */
-	public class MetadataErrorBuilder {
+	public class Logger extends EventDispatcher implements ILogger {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -59,12 +61,10 @@ package org.flashapi.hummingbird.utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>MetadataErrorBuilder</code>
-		 * 					instance.
+		 *  Constructor. 	Creates a new <code>Logger</code> instance.
 		 */
-		public function MetadataErrorBuilder() {
+		public function Logger() {
 			super();
-			this.initObj();
 		}
 		
 		//--------------------------------------------------------------------------
@@ -74,62 +74,32 @@ package org.flashapi.hummingbird.utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Builds and returns the error message.
-		 * 
-		 * 	@return	The error message built from the specified data.
+		 *  @inheritDoc
 		 */
-		public function build():String {
-			HummingbirdBase.getLogger().warn("Invlaid metadata found");
-			return _message;
-		}
-		
-		public function expected(expected:*, before:String = "", after:String = ""):MetadataErrorBuilder {
-			_message += before + "Expected '" + expected + "'" + after;
-			return this;
-		}
-		
-		public function got(got:*, before:String = "", after:String = ""):MetadataErrorBuilder {
-			_message += before + "got '" + got + "'" + after;
-			return this;
+		public function config(message:String, ... rest):void {
+			this.createLog(LogLevel.CONFIG, message, rest);
 		}
 		
 		/**
-		 * 	Adds a dot character [.] at the end of the message.
-		 * 
-		 * 	@return	The reference to this <code>MetadataErrorBuilder</code> instance.
+		 *  @inheritDoc
 		 */
-		public function dot():MetadataErrorBuilder {
-			_message += ".";
-			return this;
+		public function fatal(message:String, ... rest):void {
+			this.createLog(LogLevel.FATAL, message, rest);
 		}
 		
 		/**
-		 * 	Adds a comma character [,] at the end of the message.
-		 * 
-		 * 	@return	The reference to this <code>MetadataErrorBuilder</code> instance.
+		 *  @inheritDoc
 		 */
-		public function comma():MetadataErrorBuilder {
-			_message += ",";
-			return this;
+		public function info(message:String, ... rest):void {
+			this.createLog(LogLevel.INFO, message, rest);
 		}
-		
-		public function message(error:String, before:String = "", after:String = ""):MetadataErrorBuilder {
-			_message += before + error + after;
-			return this;
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	@private
-		 * 
-		 * 	The message currently being built.
+		 *  @inheritDoc
 		 */
-		private var _message:String;
+		public function warn(message:String, ... rest):void {
+			this.createLog(LogLevel.WARN, message, rest);
+		}
 		
 		//--------------------------------------------------------------------------
 		//
@@ -140,10 +110,44 @@ package org.flashapi.hummingbird.utils {
 		/**
 		 * 	@private
 		 * 
-		 * 	Initializes the object.
+		 * 	Creates a log from the specified <code>message</code> and <code>level</code>
+		 * 	properties.
+		 * 
+		 * 	@param level	The granularity level of the data to log. A constant
+		 * 					of the <code>LogLevel</code> class.
+		 * 	@param message 	The information to log.
+		 * 	@param rest		Additional parameters that can be subsituted in the
+		 * 					str parameter at each "{x}" location.
 		 */
-		private function initObj():void {
-			_message = "";
+		private function createLog(level:uint, message:String, ... rest):void {
+			var evt:LogEvent = new LogEvent(LogEvent.LOG);
+			evt.level = level;
+			evt.message = this.composeLogMessage(message, rest);
+			this.dispatchEvent(evt);
+		}
+		
+		/**
+		 * 	Composes and returns the message created from the original <code>message</code>
+		 * 	and the additional parameters, specified by the <code>rest</code>
+		 * 	parameter.
+		 * 
+		 * 	@param	message		The original information to log.
+		 * 	@param	... rest	Additional parameters that can be subsituted in 
+		 * 						the str parameter at each "{x}" location.
+		 * 
+		 * 	@return	The message to log.
+		 */
+		private function composeLogMessage(message:String, ... rest):String {
+			var msg:String = message;
+			var len:int = rest.length - 1;
+			var pattern:RegExp;
+			var addParam:Object;
+			for (; len >= 0; len--) {
+				pattern = new RegExp("{" + String(len) + "}");
+				addParam = rest[len];
+				msg = msg.replace(pattern, addParam);
+			}
+			return msg;
 		}
 	}
 }
