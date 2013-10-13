@@ -51,6 +51,7 @@ package org.flashapi.hummingbird {
 	import org.flashapi.hummingbird.core.IApplicationContext;
 	import org.flashapi.hummingbird.factory.IDefinitionRegistry;
 	import org.flashapi.hummingbird.factory.IFactory;
+	import org.flashapi.hummingbird.logging.ILogger;
 	import org.flashapi.hummingbird.view.IView;
 	
 	/**
@@ -64,6 +65,15 @@ package org.flashapi.hummingbird {
 		//  Public methods
 		//
 		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Returns the reference to the Hummingbird framework internal logger.
+		 * 
+		 * 	@return The Hummingbird framework internal logger.
+		 */
+		public static function getLogger():ILogger {
+			return HummingbirdBase.getLogger();
+		}
 		
 		/**
 		 * 	Adds the application context to the Hummingbird IoC container.

@@ -73,6 +73,15 @@ package org.flashapi.hummingbird {
 		//--------------------------------------------------------------------------
 		
 		/**
+		 * 	Returns the reference to the Hummingbird framework internal logger.
+		 * 
+		 * 	@return The Hummingbird framework internal logger.
+		 */
+		public static function getLogger():ILogger {
+			return HummingbirdBase.getLogger();
+		}
+		
+		/**
 		 * 	Adds the application context to the Hummingbird IoC container.
 		 * 
 		 * 	@param	applicationContext	The applicationcontext to add to the
