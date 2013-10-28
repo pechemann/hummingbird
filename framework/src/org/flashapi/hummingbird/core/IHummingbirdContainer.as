@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.1.0, 20/10/2013 16:41
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -58,12 +58,25 @@ package org.flashapi.hummingbird.core {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Declares the application context to the Hummingbird IoC container.
+		 * 	Declares the specified application context to the Hummingbird IoC container.
 		 * 
 		 * 	@param	applicationContext	The application context to be added to this
 		 * 								Hummingbird IoC container.
 		 */
 		function setApplicationContext(applicationContext:IApplicationContext):void;
+		
+		/**
+		 * 	Removes the specified application context from the Hummingbird IoC container.
+		 * 
+		 * 	@param	applicationContext	The application context to be removed from 
+		 * 								this Hummingbird IoC container.
+		 * 	@param	disposeMvcObjects	Indicates whether the IoC container must
+		 * 								delete all the references of the MVC objects
+		 * 								associated to the specified context (<code>true</code>),
+		 * 								or not (<code>true</code>). The default value
+		 * 								is <code>true</code>.
+		 */
+		function clearApplicationContext(applicationContext:IApplicationContext, disposeMvcObjects:Boolean = true):void;
 		
 		/**
 		 * 	Returns the MVC object specified by its alias.
@@ -97,9 +110,21 @@ package org.flashapi.hummingbird.core {
 		function removeMVCObject(alias:String):IMVCObject;
 		
 		/**
+		 * 	Returns a boolean value that indicates whether a MVC object with the
+		 * 	specified alias is registered in the IoC container (<code>true</code>),
+		 * 	or not (<code>false</code>).
+		 * 
+		 * 	@param	alias	The alias associated with the MVC object to match.
+		 * 	
+		 * 	@return	<code>true</code> whether the <code>IMVCObject</code> instance
+		 * 			with the specified alias exists; <code>false</code> otherwise.
+		 */
+		function hasMVCObject(alias:String):Boolean;
+		
+		/**
 		 * 	Performs the lookup method injection on the specified singleton object.
 		 * 
-		 * 	@param	obj The singleton object on which to êrform the lookup method
+		 * 	@param	obj The singleton object on which to perform the lookup method
 		 * 				injection.
 		 * 
 		 * 	@throws org.flashapi.hummingbird.exceptions.MetadataException

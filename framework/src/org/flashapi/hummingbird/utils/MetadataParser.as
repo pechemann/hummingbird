@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.utils {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.1, 06/10/2013 19:23
+	 *  @version 1.1.2, 20/10/2013 16:30
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -50,9 +50,13 @@ package org.flashapi.hummingbird.utils {
 	import org.flashapi.hummingbird.controller.IController;
 	import org.flashapi.hummingbird.core.HummingbirdBase;
 	import org.flashapi.hummingbird.core.IApplicationContext;
+	import org.flashapi.hummingbird.core.IMVCObject;
+	import org.flashapi.hummingbird.core.MVCReference;
 	import org.flashapi.hummingbird.enum.MetadataReferenceEnum;
 	import org.flashapi.hummingbird.events.DependencyEvent;
+	import org.flashapi.hummingbird.exceptions.InvalidTypeException;
 	import org.flashapi.hummingbird.exceptions.MetadataException;
+	import org.flashapi.hummingbird.exceptions.NoSuchDefinitionException;
 	import org.flashapi.hummingbird.model.IModel;
 	import org.flashapi.hummingbird.orchestrator.IOrchestrator;
 	import org.flashapi.hummingbird.service.IService;
@@ -101,22 +105,34 @@ package org.flashapi.hummingbird.utils {
 		 * 	@throws org.flashapi.hummingbird.exceptions.MetadataException
 		 * 			Throws a <code>MetadataException</code> exception if the specified
 		 * 			object contains invalid Metadata.
+		 * 	@throws org.flashapi.hummingbird.exceptions.InvalidTypeException
+		 * 			Throws a <code>InvalidTypeException</code> exception if the specified
+		 * 			object implements an invalid MVC interface.
 		 * 	@throws ReferenceError 
 		 * 			Throws a <code>ReferenceError</code> error if the specified
 		 * 			class for a <code>RegisterClass</code> Metadata declaration is
-		 * 			undefined .
+		 * 			undefined.
 		 */
 		public static function parseMetadata(obj:Object, singletonInstances:Dictionary, singletonReferences:Dictionary):void {
 			_dependentObj = new Vector.<Object>();
 			try {
+				if (obj is IApplicationContext) {
+					MetadataParser._contextRef = obj as IApplicationContext;
+				} else if(MetadataParser._contextRef == null) {
+					HummingbirdBase.getLogger()
+					.warn("The object '" + obj + "' is not of type IApplicationContext on MetadataParser.parseMetadata()");
+				}
 				MetadataParser.parseSingletons(obj, singletonInstances, singletonReferences);
 				while (_dependentObj.length > 0) {
 					MetadataParser.injectDependencies(_dependentObj.shift(), singletonInstances);
 				}
+				_contextRef = null;
 				_dependentObj = null;
 				_singletonType = null;
 				_metadataRef = null;
 			} catch (e:MetadataException) {
+				throw e;
+			} catch (e:InvalidTypeException) {
 				throw e;
 			} catch (e:ReferenceError) {
 				throw new MetadataException(
@@ -168,6 +184,13 @@ package org.flashapi.hummingbird.utils {
 		 * 	The temporary reference to metadata currently being processed.
 		 */
 		private static var _metadataRef:String;
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	The temporary reference to applications context currently being processed.
+		 */
+		private static var _contextRef:IApplicationContext;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -233,7 +256,10 @@ package org.flashapi.hummingbird.utils {
 		 * 	@throws ReferenceError 
 		 * 			Throws a <code>ReferenceError</code> error if the specified
 		 * 			class for a <code>RegisterClass</code> Metadata declaration is
-		 * 			undefined .
+		 * 			undefined.
+		 * 	@throws org.flashapi.hummingbird.exceptions.NoSuchDefinitionException
+		 * 			Throws a <code>NoSuchDefinitionException</code> exception if the 
+		 * 			specified object contains invalid aliases.
 		 */
 		private static function createSingleton(type:String, singletonInstances:Dictionary, singletonReferences:Dictionary):Object {
 			var ClassRef:Class = getDefinitionByName(type) as Class;
@@ -250,9 +276,30 @@ package org.flashapi.hummingbird.utils {
 			MetadataParser.checkKeyArgument(String(arg.@key), MetadataConstant.ALIAS);
 			var alias:String = String(arg.@value);
 			MetadataParser.checkAlias(alias, singleton);
-			singletonInstances[alias] = singleton;
+			singletonInstances[alias] = MetadataParser.getMVCReference(alias, singleton as IMVCObject, type);
 			singletonReferences[type] = type;
 			return singleton;
+		}
+		
+		/**
+		 * 	Returns a <code>MVCReference</code> instance initialized from the specified
+		 * 	parameters.
+		 * 
+		 * 	@param	alias			The alias for the associated MVC object.
+		 * 	@param	mvcObject		The MVC object associated to the new <code>MVCReference</code>
+		 * 							instance.
+		 * 	@param	typeDefinition	A string that represents the fully qualified class
+		 * 							name for the associated MVC object.
+		 * 
+		 * 	@return	A <code>MVCReference</code> instance.
+		 */
+		private static function getMVCReference(alias:String, mvcObject:IMVCObject, typeDefinition:String):MVCReference {
+			var reference:MVCReference = new MVCReference();
+			reference.context = MetadataParser._contextRef;
+			reference.alias = alias;
+			reference.mvcObject = mvcObject;
+			reference.typeDefinition = typeDefinition
+			return reference;
 		}
 		
 		/**
@@ -300,10 +347,11 @@ package org.flashapi.hummingbird.utils {
 				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, "IOrchestrator");
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
 			} else {
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.MODEL, "IModel");
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, "IModel");
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, "IModel");
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IModel");
+				var interfaceRef:String = (obj is IModel)  ? "IModel" : "IService";
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.MODEL, interfaceRef);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, interfaceRef);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, interfaceRef);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, interfaceRef);
 			}
 		}
 		
@@ -322,6 +370,10 @@ package org.flashapi.hummingbird.utils {
 		 * 	@param	metadataRef			The metadata tag considered for this injection
 		 * 								of dependecies; must be MetadataConstant.MODEL
 		 * 								MetadataConstant.CONTROLLER or MetadataConstant.SERVICE.
+		 * 
+		 * 	@throws org.flashapi.hummingbird.exceptions.NoSuchDefinitionException
+		 * 			Throws a <code>NoSuchDefinitionException</code> exception if an alias in the 
+		 * 			specified object has not been found.
 		 */
 		private static function injectInstances(obj:Object, reflection:XML, singletonInstances:Dictionary, metadataRef:String):void {
 			var dependencyList:XMLList = reflection..metadata.(@name == metadataRef);
@@ -330,15 +382,28 @@ package org.flashapi.hummingbird.utils {
 			var parent:XML;
 			var propName:String;
 			var alias:String;
+			var mvcRef:MVCReference;
 			var singleton:Object;
 			for (; len >= 0; len--) {
 				dependency = dependencyList[len];
 				parent = dependency.parent();
 				propName = parent.@name;
 				alias = dependency.arg[0].@value;
-				singleton = singletonInstances[alias];
-				MetadataParser.checkInvalidMVCMetadata(metadataRef, singleton, alias);
-				obj[propName] = singleton;
+				mvcRef = singletonInstances[alias];
+				if (mvcRef != null) {
+					singleton = mvcRef.mvcObject;
+					MetadataParser.checkInvalidMVCMetadata(metadataRef, singleton, alias);
+					obj[propName] = singleton;
+				} else {
+					throw new NoSuchDefinitionException(
+						new MetadataErrorBuilder()
+						.message("the alias")
+						.message(alias, " '", "'")
+						.message(" has not been found")
+						.dot()
+						.build()
+					);
+				}
 			}
 		}
 		
@@ -356,24 +421,42 @@ package org.flashapi.hummingbird.utils {
 		 * 	@throws org.flashapi.hummingbird.exceptions.MetadataException
 		 * 			Throws a <code>MetadataException</code> exception if the specified
 		 * 			object contains invalid MVC metadata.
+		 * 	@throws org.flashapi.hummingbird.exceptions.InvalidTypeException
+		 * 			Throws a <code>InvalidTypeException</code> exception if the specified
+		 * 			object implements an invalid MVC interface.
 		 */
 		private static function checkInvalidMVCMetadata(metadataRef:String, obj:Object, alias:String) :void {
-			var isValid:Boolean = true;
-			var expectactedValue:String;
+			var isValidInterface:Boolean = true;
+			var isMetadataValid:Boolean = true;
+			var expectedValue:String;
 			if (metadataRef == MetadataConstant.MODEL) {
-				isValid = Boolean(obj is IModel);
-				expectactedValue = MetadataConstant.MODEL;
+				isValidInterface = Boolean(obj is IModel);
+				expectedValue = MetadataConstant.MODEL;
+				isMetadataValid = MetadataParser.isValidMetadata(metadataRef, expectedValue);
 			} else if (metadataRef == MetadataConstant.CONTROLLER) {
-				isValid = Boolean(obj is IController);
-				expectactedValue = MetadataConstant.CONTROLLER;
+				isValidInterface = Boolean(obj is IController);
+				expectedValue = MetadataConstant.CONTROLLER;
+				isMetadataValid = MetadataParser.isValidMetadata(metadataRef, expectedValue);
 			} else if (metadataRef == MetadataConstant.ORCHESTRATOR) {
-				isValid = Boolean(obj is IOrchestrator);
-				expectactedValue = MetadataConstant.ORCHESTRATOR;
+				isValidInterface = Boolean(obj is IOrchestrator);
+				expectedValue = MetadataConstant.ORCHESTRATOR;
+				isMetadataValid = MetadataParser.isValidMetadata(metadataRef, expectedValue);
 			} else if (metadataRef == MetadataConstant.SERVICE) {
-				isValid = Boolean(obj is IService);
-				expectactedValue = MetadataConstant.SERVICE;
+				isValidInterface = Boolean(obj is IService);
+				expectedValue = MetadataConstant.SERVICE;
+				isMetadataValid = MetadataParser.isValidMetadata(metadataRef, expectedValue);
 			}
-			if (isValid == false) {
+			if (isValidInterface == false) {
+				throw new InvalidTypeException(
+					new MetadataErrorBuilder()
+					.message("invalid interface declaration")
+					.message(alias, " on '","'")
+					.dot()
+					.expected(MetadataParser.geInterfaceFromMetadata(expectedValue), " ")
+					.dot()
+					.build()
+				);
+			} else if (isMetadataValid == false) {
 				throw new MetadataException(
 					new MetadataErrorBuilder()
 					.message("invalid metadata declaration")
@@ -389,6 +472,48 @@ package org.flashapi.hummingbird.utils {
 		
 		/**
 		 * 	@private
+		 * 
+		 * 	Compares the metadata found on a MVC object with the expected value.
+		 * 
+		 * 	@param	metadataRef	A metadata reference found on a MVC object.
+		 * 	@param	expectedValue	The expected metadata value.
+		 * 
+		 * 	@return	<code>true</code> whether <code>metadataRef</code> matches
+		 * 			<code>expectedValue</code>; <code>false</code> otherwise.
+		 */
+		private static function isValidMetadata(metadataRef:String, expectedValue:String):Boolean {
+			var isValid:Boolean = Boolean(metadataRef == expectedValue);
+			return isValid;
+		}
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Returns the expected interface retreived from the specified MVC metadata.
+		 * 
+		 * 	@param	metadata	A MVC metadata reference.
+		 * 	
+		 * 	@return	The expected interface.
+		 */
+		private static function geInterfaceFromMetadata(metadata:String):String {
+			var interfaceReference:String;
+			if (metadata == MetadataReferenceEnum.CONTROLLER.metadataReference) {
+				interfaceReference = MetadataReferenceEnum.CONTROLLER.interfaceReference;
+			} else if (metadata == MetadataReferenceEnum.MODEL.metadataReference) {
+				interfaceReference = MetadataReferenceEnum.MODEL.interfaceReference;
+			} else if (metadata == MetadataReferenceEnum.CONTROLLER.metadataReference) {
+				interfaceReference = MetadataReferenceEnum.CONTROLLER.interfaceReference;
+			} else if (metadata == MetadataReferenceEnum.ORCHESTRATOR.metadataReference) {
+				interfaceReference = MetadataReferenceEnum.ORCHESTRATOR.interfaceReference;
+			} else if (metadata == MetadataReferenceEnum.SERVICE.metadataReference) {
+				interfaceReference = MetadataReferenceEnum.SERVICE.interfaceReference;
+			}
+			return interfaceReference;
+		}
+		
+		/**
+		 * 	@private
+		 * 
 		 * 	Returns the expected MVC metadata retreived from the interface implemented
 		 *  by the specified MVC object.
 		 * 
@@ -399,17 +524,19 @@ package org.flashapi.hummingbird.utils {
 		private static function getMetadataFromInterface(obj:Object):String {
 			var reflection:XML = describeType(obj);
 			var interfaces:XMLList = reflection..implementsInterface;
-			var interfaceDeclaration:String;
+			var metadataDeclaration:String;
 			if (interfaces.(@type == MetadataReferenceEnum.CONTROLLER.interfaceReference) != null) {
-				interfaceDeclaration = MetadataReferenceEnum.CONTROLLER.metadataReference;
-			} else if (interfaces.(@type == MetadataReferenceEnum.MODEL.interfaceReferenc) != null) {
-				interfaceDeclaration = MetadataReferenceEnum.MODEL.metadataReference;
-			} else if (interfaces.(@type == MetadataReferenceEnum.CONTROLLER.interfaceReferenc) != null) {
-				interfaceDeclaration = MetadataReferenceEnum.CONTROLLER.metadataReference;
-			} else if (interfaces.(@type == MetadataReferenceEnum.ORCHESTRATOR.interfaceReferenc) != null) {
-				interfaceDeclaration = MetadataReferenceEnum.ORCHESTRATOR.metadataReference;
+				metadataDeclaration = MetadataReferenceEnum.CONTROLLER.metadataReference;
+			} else if (interfaces.(@type == MetadataReferenceEnum.MODEL.interfaceReference) != null) {
+				metadataDeclaration = MetadataReferenceEnum.MODEL.metadataReference;
+			} else if (interfaces.(@type == MetadataReferenceEnum.CONTROLLER.interfaceReference) != null) {
+				metadataDeclaration = MetadataReferenceEnum.CONTROLLER.metadataReference;
+			} else if (interfaces.(@type == MetadataReferenceEnum.ORCHESTRATOR.interfaceReference) != null) {
+				metadataDeclaration = MetadataReferenceEnum.ORCHESTRATOR.metadataReference;
+			} else if (interfaces.(@type == MetadataReferenceEnum.SERVICE.interfaceReference) != null) {
+				metadataDeclaration = MetadataReferenceEnum.SERVICE.metadataReference;
 			}
-			return interfaceDeclaration;
+			return metadataDeclaration;
 		}
 		
 		/**

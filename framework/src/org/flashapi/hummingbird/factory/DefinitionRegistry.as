@@ -40,13 +40,17 @@ package org.flashapi.hummingbird.factory {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 04/05/2013 18:23
+	 *  @version 1.0.1, 24/10/2013 18:39
 	 *  @see http://www.flashapi.org/
 	 */
 	
 	import org.flashapi.hummingbird.controller.IController;
 	import org.flashapi.hummingbird.core.IMVCObject;
+	import org.flashapi.hummingbird.exceptions.InvalidTypeException;
 	import org.flashapi.hummingbird.model.IModel;
+	import org.flashapi.hummingbird.orchestrator.IOrchestrator;
+	import org.flashapi.hummingbird.service.IService;
+	import org.flashapi.hummingbird.utils.constants.InterfaceReference;
 	
 	/**
 	 * 	Default implementation of the <code>IDefinitionRegistry</code> interface:
@@ -88,14 +92,36 @@ package org.flashapi.hummingbird.factory {
 		 * 	@inheritDoc
 		 */
 		public function getModel(alias:String):IModel {
-			return _iocRef.getInstance().getMVCObject(alias);
+			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
+			this.checkType(alias, obj, IModel, InterfaceReference.MODEL);
+			return obj as IModel;
 		}
 		
 		/**
 		 * 	@inheritDoc
 		 */
 		public function getController(alias:String):IController {
-			return _iocRef.getInstance().getMVCObject(alias);
+			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
+			this.checkType(alias, obj, IController, InterfaceReference.CONTROLLER);
+			return obj as IController;
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function getService(alias:String):IService {
+			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
+			this.checkType(alias, obj, IService, InterfaceReference.SERVICE);
+			return obj as IService;
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function getOrchestrator(alias:String):IOrchestrator {
+			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
+			this.checkType(alias, obj, IOrchestrator, InterfaceReference.CONTROLLER);
+			return obj as IOrchestrator;
 		}
 		
 		/**
@@ -103,6 +129,13 @@ package org.flashapi.hummingbird.factory {
 		 */
 		public function removeDefinition(alias:String):IMVCObject {
 			return _iocRef.getInstance().removeMVCObject(alias);
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function hasDefinition(alias:String):Boolean {
+			return _iocRef.getInstance().hasMVCObject(alias);
 		}
 		
 		//--------------------------------------------------------------------------
@@ -136,6 +169,31 @@ package org.flashapi.hummingbird.factory {
 		 */
 		private function initObj(iocRef:Class):void {
 			_iocRef = iocRef;
+		}
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Tests whether the object with the specified alias implements the expected
+		 * 	type, defined by the specified interface.
+		 * 
+		 * 	@param	alias					The alias of the object to test.
+		 * 	@param	obj						The object to test.
+		 * 	@param	expectedType			The expected type reference.
+		 * 	@param	expectedInterfaceRef	The string reference to the expected
+		 * 									interface.
+		 * 
+		 * 	@throws org.flashapi.hummingbird.exceptions.InvalidTypeException
+		 * 			Throws a <code>InvalidTypeException</code> exception if the
+		 * 			<code>IFactory</code> object is asked for a MVC object instance
+		 * 			alias for which the type mismatches.
+		 */
+		private function checkType(alias:String, obj:IMVCObject, expectedType:Class, expectedInterfaceRef:String):void {
+			if ((obj is expectedType) == false) {
+				var msg:String = 	"Implicit coercion of a value for the alias " + alias
+									+ " to a possibly unrelated type " + expectedInterfaceRef;
+				throw new InvalidTypeException(msg);
+			}
 		}
 	}
 }

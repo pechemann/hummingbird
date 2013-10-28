@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Name: org/flashapi/hummingbird
 Specification-Title: Hummingbird MVC Framework
-Specification-Version: 1.4 13/10/2013 15:53
+Specification-Version: 1.4 27/10/2013 13:57
 Specification-Vendor: Pascal ECHEMANN
 Implementation-Title: org.flashapi.hummingbird
-Implementation-Version: 11
+Implementation-Version: 12
 Implementation-Vendor: Pascal ECHEMANN

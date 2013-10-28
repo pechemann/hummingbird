@@ -70,7 +70,6 @@ package org.flashapi.hummingbird.core {
 		public function HummingbirdContainer() {
 			super();
 			if (INSTANCE) {
-				_logger.fatal("Invalid attempt to access the HummingbirdContainer class constructor");
 				throw new SingletonException("you must use the getInstance() method to access IHummingbirdContainer instances");
 			}
 			this.initObj();
@@ -88,7 +87,7 @@ package org.flashapi.hummingbird.core {
 		 * 	@return	The reference to the <code>IHummingbirdContainer</code> singleton.
 		 */
 		public static function getInstance():IHummingbirdContainer {
-			return INSTANCE;
+			return HummingbirdContainer.INSTANCE;
 		}
 		
 		/**
@@ -108,9 +107,14 @@ package org.flashapi.hummingbird.core {
 		 * @inheritDoc
 		 */
 		public function setApplicationContext(applicationContext:IApplicationContext):void {
-			_logger.config("Application context initialization");
-			_applicationContext = applicationContext;
-			this.initApplicationContext();
+			this.initApplicationContext(applicationContext);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function clearApplicationContext(applicationContext:IApplicationContext, disposeMvcObjects:Boolean = true):void {
+			this.removeApplicationContext(applicationContext, disposeMvcObjects);
 		}
 		
 		/**
@@ -125,21 +129,27 @@ package org.flashapi.hummingbird.core {
 		 * @inheritDoc
 		 */
 		public function getMVCObject(alias:String):IMVCObject {
-			var obj:IMVCObject =  _singletonInstances[alias];
-			if (obj == null) {
-				_logger.warn("The MVC with the alias alias {0} does not exist!", alias);
-				throw new NoSuchDefinitionException("the alias '" + alias + "' is invalid. It must not be null or empty.");
-			}
-			return obj;
+			var dto:MVCReference =  this.getMVCReference(alias);
+			return dto.mvcObject;
 		}
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function removeMVCObject(alias:String):IMVCObject {
-			var obj:IMVCObject = this.getMVCObject(alias);
+			var dto:MVCReference =  this.getMVCReference(alias);
+			var obj:IMVCObject = dto.mvcObject;
+			dto = null;
 			delete _singletonInstances[alias];
 			return obj;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function hasMVCObject(alias:String):Boolean {
+			var hasMVCInstance:Boolean =  _singletonInstances[alias] ? true : false;
+			return hasMVCInstance;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -165,16 +175,23 @@ package org.flashapi.hummingbird.core {
 		/**
 		 * 	@private
 		 * 	
-		 * 	The collection of singleton instances registererd in this IoC container.
+		 * 	The collection of singleton instances registered in this IoC container.
 		 */
 		private var _singletonInstances:Dictionary;
 		
 		/**
 		 * 	@private
 		 * 	
-		 * 	The collection of class references registererd in this IoC container.
+		 * 	The collection of class references registered in this IoC container.
 		 */
 		private var _singletonReferences:Dictionary;
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	The collection of application contexts registered in this IoC container.
+		 */
+		private var _applicationContextReferences:Vector.<IApplicationContext>;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -192,6 +209,7 @@ package org.flashapi.hummingbird.core {
 			_logger.config("Hummingbird container created");
 			_singletonReferences = new Dictionary();
 			_singletonInstances = new Dictionary();
+			_applicationContextReferences = new Vector.<IApplicationContext>();
 		}
 		
 		/**
@@ -199,15 +217,83 @@ package org.flashapi.hummingbird.core {
 		 * 	
 		 * 	Initializes the application context.
 		 */
-		private function initApplicationContext():void {
-			_logger.config("Application context before");
-			_applicationContext.before();
-			this.doLookup(_applicationContext);
-			_logger.config("Application context start");
-			_applicationContext.start();
-			_logger.config("Application context after");
-			_applicationContext.after();
+		private function initApplicationContext(applicationContext:IApplicationContext):void {
+			_logger.config("Application context initialization on: " + applicationContext);
+			_applicationContextReferences.push(applicationContext);
+			_logger.config("Application context before()");
+			applicationContext.before();
+			this.doLookup(applicationContext);
+			_logger.config("Application context start()");
+			applicationContext.start();
+			_logger.config("Application context after()");
+			applicationContext.after();
 			_logger.config("Application context initialization complete");
+		}
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	Removes the application context.
+		 */
+		private function removeApplicationContext(applicationContext:IApplicationContext, disposeMvcObjects:Boolean):void {
+			_logger.config("Application context removal on: " + applicationContext);
+			_applicationContextReferences.splice(
+				_applicationContextReferences.indexOf(applicationContext), 1
+			);
+			if (disposeMvcObjects) {
+				this.deleteMvcObjects(applicationContext);
+			}
+			_logger.config("Application context remove()");
+			applicationContext.remove();
+			_logger.config("Application context removal complete");
+		}
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	Deletes all the MVC objects associated to the specified context.
+		 */
+		private function deleteMvcObjects(applicationContext:IApplicationContext):void {
+			_logger.config("Deleting MVC objects on: " + applicationContext);
+			var alias:String;
+			var obj:IMVCObject;
+			for each (var value:MVCReference in _singletonInstances) {
+				if(value.context == applicationContext) {
+					delete _singletonReferences[value.typeDefinition];
+					obj = value.mvcObject;
+					obj.finalize();
+					obj = null;
+					alias = value.alias;
+					value = null;
+					delete _singletonInstances[alias];
+				}
+			}
+		}
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Returns the registered <code>MVCReference</code> instance for the
+		 * 	specified alias.
+		 * 
+		 * 	@param	alias	The alias associated with a <code>MVCReference</code>
+		 * 					object.
+		 * 
+		 * 	@throws org.flashapi.hummingbird.exceptions.NoSuchDefinitionException
+		 * 			Throws a <code>NoSuchDefinitionException</code> exception if the
+		 * 			<code>IHummingbirdContainer</code> container is asked for a
+		 * 			<code>MVCReference</code> object instance alias for which
+		 * 			it cannot find a definition.
+		 * 
+		 * 	@return	The <code>MVCReference</code> instance with the specified alias.
+		 */
+		private function getMVCReference(alias:String):MVCReference {
+			var dto:MVCReference = _singletonInstances[alias];
+			if (dto == null) {
+				_logger.warn("The MVC with the alias alias {0} does not exist!", alias);
+				throw new NoSuchDefinitionException("the alias '" + alias + "' is invalid. It must not be null or empty.");
+			}
+			return dto;
 		}
 	}
 }

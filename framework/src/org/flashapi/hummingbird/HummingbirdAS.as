@@ -40,13 +40,14 @@ package org.flashapi.hummingbird {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 20/10/2013 16:47
 	 *  @see http://www.flashapi.org/
 	 */
 	
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
 	import org.flashapi.hummingbird.core.HummingbirdBase;
+	import org.flashapi.hummingbird.core.HummingbirdEventDispatcher;
 	import org.flashapi.hummingbird.core.HummingbirdVersion;
 	import org.flashapi.hummingbird.core.IApplicationContext;
 	import org.flashapi.hummingbird.factory.IDefinitionRegistry;
@@ -76,16 +77,33 @@ package org.flashapi.hummingbird {
 		}
 		
 		/**
-		 * 	Adds the application context to the Hummingbird IoC container.
+		 * 	Adds the specified application context to the Hummingbird IoC container.
 		 * 
 		 * 	@param	applicationContext	The applicationcontext to add to the
 		 * 								Hummingbird IoC container.
 		 * 	@param	stage				A reference to the Flash Player <code>Stage</code>
 		 * 								instance.
 		 */
-		public static function setApplicationContext(applicationContext:IApplicationContext, stage:Stage):void {
+		public static function setApplicationContext(applicationContext:IApplicationContext, stage:Stage = null):void {
 			HummingbirdBase.setStage(stage);
+			HummingbirdBase.checkStage();
 			HummingbirdBase.setApplicationContext(applicationContext);
+		}
+		
+		/**
+		 * 	Clears and removes the specified context from the Hummingbird IoC
+		 * 	container.
+		 * 
+		 * 	@param	applicationContext	The applicationcontext to remove from the
+		 * 								Hummingbird IoC container.
+		 * 	@param	disposeMvcObjects	Indicates whether the IoC container must
+		 * 								delete all the references of the MVC objects
+		 * 								associated to the specified context (<code>true</code>),
+		 * 								or not (<code>true</code>). The default value
+		 * 								is <code>true</code>.
+		 */
+		public static function clearApplicationContext(applicationContext:IApplicationContext, disposeMvcObjects:Boolean = true):void {
+			HummingbirdBase.clearApplicationContext(applicationContext, disposeMvcObjects);
 		}
 		
 		/**
@@ -95,6 +113,19 @@ package org.flashapi.hummingbird {
 		 */
 		public static function addToScene(view:IView):void {
 			HummingbirdBase.getStage().addChild(DisplayObject(view));
+		}
+		
+		/**
+		 * 	Returns a boolean value that indicates whether the specified view is
+		 * 	added to the scene (<code>true</code>), or not (<code>false</code>).
+		 * 
+		 * 	@param	view	The view to test.
+		 * 
+		 * 	@return <code>true</code> whether the specified view is added to the
+		 * 			scene; <code>false</code> otherwise.
+		 */
+		public static function sceneContains(view:IView):Boolean {
+			return HummingbirdBase.getStage().contains(DisplayObject(view));
 		}
 		
 		/**
@@ -155,6 +186,15 @@ package org.flashapi.hummingbird {
 		 */
 		public static function getVersion():HummingbirdVersion {
 			return HummingbirdBase.getVersion();
+		}
+		
+		/**
+		 * 	Returns the Hummingbird event dispatcher singleton.
+		 * 
+		 * 	@return	The Hummingbird event dispatcher singleton.
+		 */
+		public static function getEventDispatcher():HummingbirdEventDispatcher {
+			return HummingbirdBase.getEventDispatcher();
 		}
 	}
 }

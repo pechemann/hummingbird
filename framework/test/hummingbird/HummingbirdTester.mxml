@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	The HummingbirdTester class represents the entry point of the unit tests for  
+	the Hummingbird Framework.
+-->
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:flexUnitUIRunner="http://www.adobe.com/2009/flexUnitUIRunner"
+	minWidth="1024" minHeight="600"
+	creationComplete="this.creationCompleteHandler(event);">
+	
+	<fx:Script>
+	<![CDATA[
+		import flash.display.Stage;
+		import hummingbird.project.application.BasicContext;
+		import hummingbird.project.application.InvalidContext;
+		import hummingbird.testSuiteAS.HummingbirdASSuite;
+		import hummingbird.testSuiteCore.HummingbirdCoreSuite;
+		import hummingbird.testSuiteFX.HummingbirdFXSuite;
+		import hummingbird.testSuiteStarling.HummingbirdStarlingSuite;
+		import mx.events.FlexEvent;
+		import org.flashapi.hummingbird.core.AbstractApplicationContext;
+		import org.flashapi.hummingbird.core.IApplicationContext;
+		import org.flashapi.hummingbird.Hummingbird;
+		import org.flashapi.hummingbird.starling.StarlingID;
+		import org.flexunit.listeners.UIListener;
+		import org.flexunit.runner.FlexUnitCore;
+		import starling.core.Starling;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public static methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Gets a reference to the <code>Application</code> instance.
+		 */
+		public static function getApplication():Application {
+			return HummingbirdTester._appRef;
+		}
+		
+		/**
+		 * 	Gets a reference to the <code>Stage</code> instance.
+		 */
+		public static function getStage():Stage {
+			return HummingbirdTester._stageRef;
+		}
+		
+		/**
+		 * 	Gets a reference to a unique instance of the <code>BasicContext</code>
+		 * 	class.
+		 */
+		public static function getBasicContext():IApplicationContext {
+			return HummingbirdTester._basicContext;
+		}
+		
+		/**
+		 * 	Gets a reference to a unique instance of the <code>InvalidContext</code>
+		 * 	class.
+		 */
+		public static function getInvalidContext():IApplicationContext {
+			return HummingbirdTester._invalidContext;
+		}
+		
+		/**
+		 * 	Gets a reference to an empty <code>IApplicationContext</code> instance.
+		 */
+		public static function getInvalidDependenciesContext():IApplicationContext {
+			return HummingbirdTester._invalidDependenciesContext;
+		}
+		
+		/**
+		 * 	A convenient method for deleting <code>Starling</code> instance.
+		 * 
+		 * 	@param	id	The <code>StarlingID</code> object associated with the
+		 * 				<code>Starling</code> instance to delete.
+		 */
+		public static function deleteStarling(id:StarlingID):void {
+			var starling:Starling = Hummingbird.removeStarling(id);
+			starling.stop();
+			starling.dispose();
+			starling = null;
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	A reference to the <code>Application</code> instance.
+		 */
+		private static var _appRef:Application;
+		
+		/**
+		 * 	A reference to the <code>Stage</code> instance.
+		 */
+		private static var _stageRef:Stage;
+		
+		/**
+		 * 	A reference to thea unique instance of the <code>BasicContext</code>
+		 * 	class.
+		 */
+		private static var _basicContext:IApplicationContext;
+		
+		/**
+		 * 	A reference to a unique instance of the <code>InvalidContext</code>
+		 * 	class.
+		 */
+		private static var _invalidContext:IApplicationContext;
+		
+		/**
+		 * 	A reference to an empty <code>IApplicationContext</code> instance.
+		 */
+		private static var _invalidDependenciesContext:IApplicationContext;
+		
+		/**
+		 * 	A reference to the <code>FlexUnitCore</code> instance.
+		 */
+		private var _flexUnitCore:FlexUnitCore;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Initializes the application.
+		 */
+		private function creationCompleteHandler(e:FlexEvent):void {
+			this.initFlexUnit();
+			this.initParameters();
+			this.runTest();
+		}
+		
+		/**
+		 * 	Initializes the FlexUnit Framework.
+		 */
+		private function initFlexUnit():void {
+			_flexUnitCore = new FlexUnitCore();
+			_flexUnitCore.addListener(new UIListener(this.uiListener));
+		}
+		
+		/**
+		 * 	Initializes the global parameter for the test cases.
+		 */
+		private function initParameters():void {
+			HummingbirdTester._appRef = this;
+			HummingbirdTester._stageRef = this.systemManager.stage;
+			HummingbirdTester._basicContext = new BasicContext();
+			HummingbirdTester._invalidContext = new InvalidContext();
+			HummingbirdTester._invalidDependenciesContext = new AbstractApplicationContext();
+		}
+		
+		/**
+		 * 	Starts the test suite.
+		 */
+		private function runTest():void {
+			_flexUnitCore.run(
+				HummingbirdCoreSuite, HummingbirdASSuite,
+				HummingbirdFXSuite, HummingbirdStarlingSuite
+			);
+		}
+	]]>
+	</fx:Script>
+ 
+	<flexUnitUIRunner:TestRunnerBase
+		id="uiListener"
+		width="100%" height="100%" />
+</s:Application>

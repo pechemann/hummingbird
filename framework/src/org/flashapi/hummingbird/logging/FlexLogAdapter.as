@@ -46,13 +46,14 @@ package org.flashapi.hummingbird.logging {
 	
 	import mx.logging.Log;
 	import mx.logging.ILogger;
+	import org.flashapi.hummingbird.core.IFinalizable;
 	
 	/**
 	 *  The <code>FlexLogAdapter</code> class provides the built-in mechanism for
 	 * 	translating the Hummingbird logging API interface into the compatible Flex
 	 * 	logging API interface.
 	 */
-	public class FlexLogAdapter {
+	public class FlexLogAdapter implements IFinalizable {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -61,15 +62,16 @@ package org.flashapi.hummingbird.logging {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Constructor. creates a new <code>FlexLogAdapter</code> instance.
+		 * 	Constructor. Creates a new <code>FlexLogAdapter</code> instance.
 		 */
 		public function FlexLogAdapter() {
 			super();
+			this.initObj();
 		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public properties
+		//  Getter / setter properties
 		//
 		//--------------------------------------------------------------------------
 		
@@ -79,7 +81,12 @@ package org.flashapi.hummingbird.logging {
 		 * 
 		 * 	@default true
 		 */
-		public var includeFrameworkTag:Boolean = true;
+		public function get includeFrameworkTag():Boolean {
+			return _logMessageComposer.includeFrameworkTag;
+		}
+		public function set includeFrameworkTag(value:Boolean):void {
+			_logMessageComposer.includeFrameworkTag = value;
+		}
 		
 		/**
 		 * 	Indicates whether the level for the log be should added to the outpout
@@ -87,14 +94,24 @@ package org.flashapi.hummingbird.logging {
 		 * 
 		 * 	@default true
 		 */
-		public var includeLevel:Boolean = true;
+		public function get includeLevel():Boolean {
+			return _logMessageComposer.includeLevel;
+		}
+		public function set includeLevel(value:Boolean):void {
+			_logMessageComposer.includeLevel = value;
+		}
 		
 		/**
 		 * 	The separator string to use between fields.
 		 * 
 		 * 	@default " "
 		 */
-		public var fieldSeparator:String = " ";
+		public function get fieldSeparator():String {
+			return _logMessageComposer.fieldSeparator;
+		}
+		public function set fieldSeparator(value:String):void {
+			_logMessageComposer.fieldSeparator = value;
+		}
 		
 		//--------------------------------------------------------------------------
 		//
@@ -111,16 +128,9 @@ package org.flashapi.hummingbird.logging {
 		 * 	@see org.flashapi.hummingbird.logging.LogEvent
 		 */
 		public function logEvent(event:LogEvent):void {
-			var level:uint = event.level;
-			if(level == LogLevel.CONFIG) {
-				_logger.debug(this.composeMessage(FlexLogAdapter.CONFIG_TAG, event.message));
-			} else if(level == LogLevel.FATAL) {
-				_logger.debug(this.composeMessage(FlexLogAdapter.FATAL_TAG, event.message));
-			} else if(level == LogLevel.INFO) {
-				_logger.debug(this.composeMessage(FlexLogAdapter.INFO_TAG, event.message));
-			} else if(level == LogLevel.WARN) {
-				_logger.debug(this.composeMessage(FlexLogAdapter.WARN_TAG, event.message));
-			}
+			var logMessage:String =
+				_logMessageComposer.composeMessage(event.level, event.message);
+			_logger.debug(logMessage);
 		}
 		
 		/**
@@ -151,6 +161,15 @@ package org.flashapi.hummingbird.logging {
 			_logger = Log.getLogger(_category);
 		}
 		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function finalize():void {
+			_category = null;
+			_logger = null;
+			_logMessageComposer = null;
+		}
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Private properties
@@ -158,45 +177,27 @@ package org.flashapi.hummingbird.logging {
 		//--------------------------------------------------------------------------
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	The category of the Flex logger that should be currently used by this
 		 * 	adapter.
 		 */
 		private var _category:String;
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	The reference to the Flex logger that should be currently used by this
 		 * 	adapter.
 		 */
 		private var _logger:mx.logging.ILogger;
 		
 		/**
-		 * 	Specifies the string to be used as the "[Hummingbird]" tag for a log.
+		 * 	@private
+		 * 
+		 * 	The message composer for this <code>FlexLogAdapter</code> instance.
 		 */
-		private static const FRAMEWORK_TAG:String = "[Hummingbird]";
-		
-		/**
-		 * 	Specifies the string to be used as level tag for the 
-		 * 	<code>LogLevel.FATAL</code> level.
-		 */
-		private static const FATAL_TAG:String = "[LogLevel.FATAL]";
-		
-		/**
-		 * 	Specifies the string to be used as level tag for the 
-		 * 	<code>LogLevel.CONFIG</code> level.
-		 */
-		private static const CONFIG_TAG:String = "[LogLevel.CONFIG]";
-		
-		/**
-		 * 	Specifies the string to be used as level tag for the 
-		 * 	<code>LogLevel.INFO</code> level.
-		 */
-		private static const INFO_TAG:String = "[LogLevel.INFO]";
-		
-		/**
-		 * 	Specifies the string to be used as level tag for the 
-		 * 	<code>LogLevel.WARN</code> level.
-		 */
-		private static const WARN_TAG:String = "[LogLevel.WARN]";
+		private var _logMessageComposer:LogMessageComposer;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -205,21 +206,13 @@ package org.flashapi.hummingbird.logging {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Composes the message to send to the logger, from the specified level,
-		 *  the original message and the predefined properties.
+		 * 	@private
 		 * 
-		 * 	@param	level	The level for this log. A constant of the LogLevel
-		 * 					class.
-		 * 	@param	message	The original message for this log.
-		 * 
-		 * 	@return	The formatted string for this log.
+		 * 	Initializes the object.
 		 */
-		private function composeMessage(level:String, message:String):String {
-			var msg:String = "";
-			if (includeFrameworkTag) msg += FlexLogAdapter.FRAMEWORK_TAG + fieldSeparator;
-			if (includeLevel) msg += level + fieldSeparator;
-			msg += message;
-			return msg;
+		private function initObj():void {
+			_logMessageComposer = new LogMessageComposer();
+			_logMessageComposer.includeDate = _logMessageComposer.includeTime = false;
 		}
 	}
 }

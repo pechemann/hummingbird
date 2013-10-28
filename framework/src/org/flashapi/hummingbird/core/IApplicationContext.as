@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 20/10/2013 16:55
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -75,5 +75,12 @@ package org.flashapi.hummingbird.core {
 		 * 	after its initialization. It is the starting point of the application.
 		 */
 		function start():void;
+		
+		/**
+		 * 	The <code>remove()</code> method is called by the Hummingbird framework
+		 * 	after the context has been removed from the application. It is the ending
+		 * 	point of the application.
+		 */
+		function remove():void;
 	}
 }

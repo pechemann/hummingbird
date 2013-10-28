@@ -45,6 +45,7 @@ package org.flashapi.hummingbird.logging {
 	 */
 	
 	import flash.events.EventDispatcher;
+	import org.flashapi.hummingbird.exceptions.SingletonException;
 	
 	/**
 	 * 	Default implementation of the <code>ILogger</code> interface. The
@@ -65,7 +66,32 @@ package org.flashapi.hummingbird.logging {
 		 */
 		public function Logger() {
 			super();
+			if (INSTANCE) {
+				throw new SingletonException("you must use the getInstance() method to access ILogger instances");
+			}
 		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Singleton management
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Returns the reference to the <code>ILogger</code> singleton.
+		 * 
+		 * 	@return	The reference to the <code>ILogger</code> singleton.
+		 */
+		public static function getInstance():ILogger {
+			return Logger.INSTANCE;
+		}
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	The <code>ILogger</code> singleton.
+		 */
+		private static const INSTANCE:ILogger = new Logger();
 		
 		//--------------------------------------------------------------------------
 		//
@@ -127,6 +153,8 @@ package org.flashapi.hummingbird.logging {
 		}
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	Composes and returns the message created from the original <code>message</code>
 		 * 	and the additional parameters, specified by the <code>rest</code>
 		 * 	parameter.

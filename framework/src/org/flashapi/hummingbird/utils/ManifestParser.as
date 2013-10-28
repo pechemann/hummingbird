@@ -89,6 +89,8 @@ package org.flashapi.hummingbird.utils {
 		//--------------------------------------------------------------------------
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	The number of characters in the manifest file.
 		 */
 		private static var _manifestLength:int;
@@ -100,6 +102,8 @@ package org.flashapi.hummingbird.utils {
 		//--------------------------------------------------------------------------
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	Sets the specification version and specification date of the manifest
 		 * 	information object.
 		 * 
@@ -118,6 +122,8 @@ package org.flashapi.hummingbird.utils {
 		}
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	Sets a property, parsed from the the Hummingbird <code>MANIFEST.MF</code>
 		 * 	file, to the specified <code>ManifestInfo</code> object.
 		 * 
@@ -133,6 +139,8 @@ package org.flashapi.hummingbird.utils {
 		}
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	Returns a property parsed from the the Hummingbird <code>MANIFEST.MF</code>
 		 * 	file, specified by the <code>property</code> parameter.
 		 * 

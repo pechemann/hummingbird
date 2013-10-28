@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 20/10/2013 16:56
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -101,5 +101,10 @@ package org.flashapi.hummingbird.core {
 		 * 	@inheritDoc
 		 */
 		public function start():void { }
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function remove():void { }
 	}
 }

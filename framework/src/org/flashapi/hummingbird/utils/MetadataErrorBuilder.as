@@ -79,7 +79,7 @@ package org.flashapi.hummingbird.utils {
 		 * 	@return	The error message built from the specified data.
 		 */
 		public function build():String {
-			HummingbirdBase.getLogger().warn("Invlaid metadata found");
+			HummingbirdBase.getLogger().warn("Invalid metadata found");
 			return _message;
 		}
 		

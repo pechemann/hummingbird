@@ -113,6 +113,8 @@ package org.flashapi.hummingbird.view {
 		//--------------------------------------------------------------------------
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	Initializes this MVC object.
 		 */
 		private function initObj():void {
@@ -120,6 +122,8 @@ package org.flashapi.hummingbird.view {
 		}
 		
 		/**
+		 * 	@private
+		 * 
 		 * 	Event handler invoked when the Dependency Injection process is completely 
 		 * 	performed on this MVC object.
 		 */
