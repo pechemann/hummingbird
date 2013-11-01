@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//	Simplified BSD License
+//	======================
+//	
+//	Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//	
+//	Redistribution and use in source and binary forms, with or without modification,
+//	are permitted provided that the following conditions are met:
+//	
+//	1. Redistributions of source code must retain the above copyright notice, this
+//		list of conditions and the following disclaimer. 
+//	
+//	2. Redistributions in binary form must reproduce the above copyright notice,
+//		this list of conditions and the following disclaimer in the documentation
+//		and/or other materials provided with the distribution. 
+//	
+//	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//	DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//	
+//	The views and conclusions contained in the software and documentation are those
+//	of the authors and should not be interpreted as representing official policies, 
+//	either expressed or implied, of the copyright holders.
+//	
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  ChevronButtonSkin.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The skin class for the chevron toggle button of the Header component.
+
+@see ui.display.Header
+-->
+<s:SparkButtonSkin
+	name="ChevronButtonSkin"
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:fb="http://ns.adobe.com/flashbuilder/2009"
+	minWidth="21" minHeight="21" 
+	alpha.disabledStates="0.5">
+	
+	<!-- Host component declaration:-->
+	<fx:Metadata>
+		<![CDATA[ 
+			/** 
+			 * 	@private
+			 */
+			[HostComponent("spark.components.ToggleButton")]
+		]]>
+	</fx:Metadata>
+	
+	<fx:Script fb:purpose="styling">
+		<![CDATA[
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Public methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 */	
+			override public function get colorizeExclusions():Array {
+				return ChevronButtonSkin.EXCLUSIONS;
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private constants
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	The skin elements that should not be colorized.
+			 */	
+			private static const EXCLUSIONS:Array = ["labelDisplay"];
+		]]>
+	</fx:Script>
+	
+	<!-- States declaration:-->
+	<s:states>
+		<s:State name="up" />
+		<s:State name="over" stateGroups="overStates" />
+		<s:State name="down" stateGroups="downStates" />
+		<s:State name="disabled" stateGroups="disabledStates" />
+		<s:State name="upAndSelected" stateGroups="selectedStates, selectedUpStates" />
+		<s:State name="overAndSelected" stateGroups="overStates, selectedStates" />
+		<s:State name="downAndSelected" stateGroups="downStates, selectedStates" />
+		<s:State name="disabledAndSelected" stateGroups="selectedUpStates, disabledStates, selectedStates" />
+	</s:states>
+	
+	<s:Group
+		width="32" height="32">
+		<!--- Draws the hit area for this skin -->
+		<s:Rect
+			left="0" right="0" top="0" bottom="0">
+			 <s:fill>
+				<s:SolidColor color="0x999999" alpha="0.0" />
+			</s:fill>
+		</s:Rect>
+		<!--- Draws the chevron item for this skin -->
+		<s:Path
+			data="M 8.0 12.0 L 16.0 18.0 L 24.0 12.0 M 0.0 0.0 Z M 8.0 18.0 L 16.0 24.0 L 24.0 18.0 M 0.0 0.0 Z">
+			<s:stroke>
+				<s:SolidColorStroke 
+					weight="2.0" caps="round"
+					color.selectedStates="0x222222" color="0x9999999"/>
+			</s:stroke>
+		</s:Path>
+	</s:Group>
+</s:SparkButtonSkin>

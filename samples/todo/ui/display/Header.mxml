@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//    Simplified BSD License
+//    ======================
+//    
+//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    
+//    Redistribution and use in source and binary forms, with or without modification,
+//    are permitted provided that the following conditions are met:
+//    
+//    1. Redistributions of source code must retain the above copyright notice, this
+//       list of conditions and the following disclaimer. 
+//    
+//    2. Redistributions in binary form must reproduce the above copyright notice,
+//       this list of conditions and the following disclaimer in the documentation
+//       and/or other materials provided with the distribution. 
+//    
+//    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//    
+//    The views and conclusions contained in the software and documentation are those
+//    of the authors and should not be interpreted as representing official policies, 
+//    either expressed or implied, of the copyright holders.
+//    
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  Header.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The header component. Contains the todo text input of the application.
+-->
+<s:Group
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	xmlns:display="ui.display.*"
+	width="100%" height="78">
+	
+	<!-- Events declaration: -->
+	<fx:Metadata> 
+		[Event(name="enter", type="mx.events.FlexEvent")]
+		[Event(name="todoCompleteAll", type="events.TodoListEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import events.TodoListEvent;
+			import flash.events.KeyboardEvent;
+			import flash.events.MouseEvent;
+			import flash.ui.Keyboard;
+			import mx.events.FlexEvent;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Public methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	Sets the visibility of the chevron button.
+			 * 
+			 * 	@param	visible	Indicates whether the chevron is visible (<code>true</code>),
+			 * 					or not (<code>false</code>).
+			 */
+			public function setCompletedButtonVisibility(visible:Boolean):void {
+				this.completedBtn.visible = visible;
+			}
+			
+			/**
+			 * 	Sets the selection state of the chevron button.
+			 * 
+			 * 	@param	selected	Indicates whether the chevron is selected
+			 * 						 (<code>true</code>), or not (<code>false</code>).
+			 */
+			public function setCompletedButtonState(selected:Boolean):void {
+				this.completedBtn.selected = selected;
+			}
+			
+			/**
+			 * 	Resets the text input.
+			 */
+			public function resetPrompt():void {
+				this.todoTextInput.text = "";
+				this.focusManager.setFocus(this.focusHackTarget);
+				this.focusManager.hideFocus();
+			}
+			
+			/**
+			 * 	Returns the label entered into the text input by the user as a new todo
+			 * 	item.
+			 * 
+			 * 	@return	The label of a new todo item.
+			 */
+			public function getTodoLabel():String {
+				return this.todoTextInput.text;
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	Invoked each time the user validates the edition of a new todo item.
+			 */
+			private function todoEnterHandler(e:FlexEvent):void {
+				this.dispatchEvent(e);
+			}
+			
+			/**
+			 * 	Allows to reset the component when the user press escape.
+			 */
+			private function todoKeyUpHandler(e:KeyboardEvent):void {
+				if (e.keyCode == Keyboard.ESCAPE) {
+					this.resetPrompt();
+				}
+			}
+			
+			/**
+			 * 	Invoked each time the user clicks on the "complete all" icon.
+			 */
+			private function completeClickHandler(e:MouseEvent):void {
+				var evt:TodoListEvent = new TodoListEvent(TodoListEvent.TODO_COMPLETE_ALL);
+				evt.allTodoCompleted = e.target.selected;
+				this.dispatchEvent(evt);
+			}
+		]]>
+	</fx:Script>
+	
+	<!-- Draws the top rectangle shape -->
+	<s:Rect
+		width="100%" height="18">
+		<s:fill>
+			<s:LinearGradient rotation="90">
+				<s:GradientEntry color="0x9B8981"/>
+				<s:GradientEntry color="0x847670"/>
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+	<s:Line
+		width="100%" yFrom="18" yTo="18">
+		<s:stroke>
+			<s:SolidColorStroke color="0x695E59" weight="1.0"/>
+		</s:stroke>
+	</s:Line>
+	<!-- Draws the background rectangle shape -->
+	<s:Rect
+		width="100%" height="60" top="19">
+		<s:fill>
+			<s:SolidColor color="0xF7F7F7"/>
+		</s:fill>
+	</s:Rect>
+	<!-- Chevron button; used to complete/uncomplete all items -->
+	<s:ToggleButton
+		id="completedBtn"
+		top="31"
+		visible="false"
+		skinClass="ui.skins.ChevronButtonSkin"
+		click="this.completeClickHandler(event);" />
+	<!-- Todo text editor -->
+	<s:TextInput
+		id="todoTextInput"
+		prompt="What needs to be done?"
+		fontSize="26" color="0x666666"
+		left="50" top="31" right="10"
+		skinClass="ui.skins.TodoTextInputSkin"
+		enter="this.todoEnterHandler(event);"
+		keyUp="this.todoKeyUpHandler(event);" />
+	<!-- Draws the left-hand vertical red lines -->
+	<s:Line
+		xFrom="32" xTo="32" yFrom="1" yTo="78">
+		<s:stroke>
+			<s:SolidColorStroke color="0xff0000" weight="1.0" alpha="0.15" />
+		</s:stroke>
+	</s:Line>
+	<s:Line
+		xFrom="35" xTo="35" yFrom="1" yTo="78">
+		<s:stroke>
+			<s:SolidColorStroke color="0xFF0000" weight="1.0" alpha="0.15"/>
+		</s:stroke>
+	</s:Line>
+	<!-- hack component used to help loosing the focus on the text editor -->
+	<display:FocusableHackComponent id="focusHackTarget" visible="false" />
+</s:Group>

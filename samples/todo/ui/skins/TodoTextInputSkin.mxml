@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//	Simplified BSD License
+//	======================
+//	
+//	Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//	
+//	Redistribution and use in source and binary forms, with or without modification,
+//	are permitted provided that the following conditions are met:
+//	
+//	1. Redistributions of source code must retain the above copyright notice, this
+//		list of conditions and the following disclaimer. 
+//	
+//	2. Redistributions in binary form must reproduce the above copyright notice,
+//		this list of conditions and the following disclaimer in the documentation
+//		and/or other materials provided with the distribution. 
+//	
+//	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//	DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//	
+//	The views and conclusions contained in the software and documentation are those
+//	of the authors and should not be interpreted as representing official policies, 
+//	either expressed or implied, of the copyright holders.
+//	
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  TodoTextInputSkin.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The skin class for the todo text input of the Header component.
+
+@see ui.display.Header
+-->
+<s:SparkSkin
+	name="TodoTextInputSkin"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:fb="http://ns.adobe.com/flashbuilder/2009"
+	alpha.disabledStates="0.5" blendMode="normal">
+
+	<!-- Host component declaration: -->
+	<fx:Metadata>
+		<![CDATA[ 
+			/** 
+			 * 	@private
+			 */
+			[HostComponent("spark.components.TextInput")]
+		]]>
+	</fx:Metadata> 
+	
+	<fx:Script fb:purpose="styling">
+		<![CDATA[
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Getter / setter properties
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 *	@private
+			 */
+			override public function get contentItems():Array {
+				return TodoTextInputSkin.CONTENT_FILL;
+			}
+			
+			/**
+			 * 	@private
+			 */
+			override public function get colorizeExclusions():Array {
+				return TodoTextInputSkin.EXCLUSIONS;
+			}
+			
+			/**
+			 *	@private
+			 */
+			override public function get focusSkinExclusions():Array {
+				return TodoTextInputSkin.FOCUS_EXCLUSIONS;
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Public methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 *	@private
+			 */
+			override public function styleChanged(styleProp:String):void {
+				var allStyles:Boolean = styleProp == null || styleProp == "styleName";
+				super.styleChanged(styleProp);
+				if (allStyles || styleProp.indexOf("padding") == 0) {
+					_paddingChanged = true;
+					this.invalidateProperties();
+				}
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private constants
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	The skin elements that should not be colored by the "contentBackgroundColor"
+			 * 	style.
+			 */	
+			private static const CONTENT_FILL:Array = [];
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	The skin elements that should not be focused.
+			 */	
+			private static const FOCUS_EXCLUSIONS:Array = ["textDisplay", "promptDisplay"];
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	The skin elements that should not be colorized.
+			 */	
+			private static const EXCLUSIONS:Array = ["textDisplay", "promptDisplay"];
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Protected methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 *	@private
+			 */
+			override protected function commitProperties():void {
+				super.commitProperties();
+				if (_paddingChanged) {
+					this.updatePadding();
+					_paddingChanged = false;
+				}
+			}
+			
+			/**
+			 *	@private
+			 */
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
+				 
+					 if (textDisplay) {
+						 if (this.currentState == "normalWithPrompt" || this.currentState == "disabledWithPrompt") {
+							 this.textDisplay.editable = false;
+						 } else {
+							 this.textDisplay.editable = true;
+							 this.focusManager.setFocus(this.textDisplay);
+						 }
+						 
+						 textDisplay.left = textDisplay.top = textDisplay.right = textDisplay.bottom = 0;
+					 }
+					if (promptDisplay)
+					{
+						promptDisplay.setLayoutBoundsSize(unscaledWidth, unscaledHeight);
+						promptDisplay.setLayoutBoundsPosition(0, 0);
+					}
+				
+				
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private properties
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 *	@private
+			 * 
+			 * 	Indicates whether the padding hans changed (<code>true</code>), or not
+			 * 	(<code>false</code>).
+			 */
+			private var _paddingChanged:Boolean = false;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 *	@private
+			 * 
+			 * 	Updates the padding of the text components
+			 */
+			private function updatePadding():void {
+				if (this.textDisplay) {
+					var padding:Number = this.getStyle("paddingLeft");
+					if (textDisplay.getStyle("paddingLeft") != padding) {
+						textDisplay.setStyle("paddingLeft", padding);
+					}
+					padding = getStyle("paddingTop");
+					if (this.textDisplay.getStyle("paddingTop") != padding) {
+						this.textDisplay.setStyle("paddingTop", padding);
+					}
+					padding = getStyle("paddingRight");
+					if (this.textDisplay.getStyle("paddingRight") != padding) {
+						this.textDisplay.setStyle("paddingRight", padding);
+					}
+					padding = getStyle("paddingBottom");
+					if (this.textDisplay.getStyle("paddingBottom") != padding) {
+						this.textDisplay.setStyle("paddingBottom", padding);
+					}
+				}
+				if (!this.promptDisplay) {
+					return;
+				}
+				padding = getStyle("paddingLeft");
+				if (this.promptDisplay.getStyle("paddingLeft") != padding) {
+					this.promptDisplay.setStyle("paddingLeft", padding);
+				}
+				padding = getStyle("paddingTop");
+				if (this.promptDisplay.getStyle("paddingTop") != padding) {
+					this.promptDisplay.setStyle("paddingTop", padding);
+				}
+				padding = getStyle("paddingRight");
+				if (this.promptDisplay.getStyle("paddingRight") != padding) {
+					this.promptDisplay.setStyle("paddingRight", padding);
+				}
+				padding = getStyle("paddingBottom");
+				if (this.promptDisplay.getStyle("paddingBottom") != padding) {
+					this.promptDisplay.setStyle("paddingBottom", padding);
+				}
+			}
+		]]>
+	</fx:Script>
+	
+	<!-- States declaration: -->
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="disabled" stateGroups="disabledStates"/>
+		<s:State name="normalWithPrompt"/>
+		<s:State name="disabledWithPrompt" stateGroups="disabledStates"/>
+	</s:states>
+	
+	<!-- The text editor component: -->
+	<s:RichEditableText id="textDisplay"
+		verticalAlign="middle"
+		widthInChars="10"
+		left="1" right="1" top="1" bottom="1"
+		editable="false" />
+	<!-- The prompt text component: -->
+	<s:Label id="promptDisplay"
+		maxDisplayedLines="1" fontStyle="italic" color="0xA9A9A9"
+		verticalAlign="middle"
+		mouseEnabled="false" mouseChildren="false"
+		includeIn="normalWithPrompt,disabledWithPrompt" 
+		includeInLayout="false" />
+</s:SparkSkin>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//    Simplified BSD License
+//    ======================
+//    
+//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    
+//    Redistribution and use in source and binary forms, with or without modification,
+//    are permitted provided that the following conditions are met:
+//    
+//    1. Redistributions of source code must retain the above copyright notice, this
+//       list of conditions and the following disclaimer. 
+//    
+//    2. Redistributions in binary form must reproduce the above copyright notice,
+//       this list of conditions and the following disclaimer in the documentation
+//       and/or other materials provided with the distribution. 
+//    
+//    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//    
+//    The views and conclusions contained in the software and documentation are those
+//    of the authors and should not be interpreted as representing official policies, 
+//    either expressed or implied, of the copyright holders.
+//    
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  TodoListItemRenderer.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The item renderer for the todo list component.
+
+@see ui.display.TodoList
+-->
+<s:ItemRenderer
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:primitives="ui.primitives.*"
+	width="500"
+	autoDrawBackground="false"
+	rollOver="this.rollOverHandler(event);"
+	rollOut="this.rollOutHandler(event);">
+
+	<!-- States declaration: -->
+	<s:states> 
+		<s:State name="normal"/> 
+		<s:State name="hovered"/> 
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import flash.events.KeyboardEvent;
+			import flash.ui.Keyboard;
+			import models.dto.Todo;
+			import events.TodoListEvent;
+			import flash.events.Event;
+			import flash.events.MouseEvent;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Getter / setter properties
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 */
+			override public function set data(value:Object):void {
+				super.data = value;
+				if (value) {
+					this.labelDisplay.text = value.label;
+					var isCompleted:Boolean = value.completed;
+					this.setLineThrough(isCompleted);
+					this.checkmarkBtn.selected = isCompleted;
+				} else {
+					this.labelDisplay.text = "";
+					this.setLineThrough(false);
+					this.checkmarkBtn.selected = false;
+				}
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private properties
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Storage for the old label value when the todo is beeing edited.
+			 */
+			private var _oldLabel:String;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Invoked each time the user clicks on the checkmark icon button.
+			 */
+			private function checkmarkClickHandler(e:MouseEvent):void {
+				var isTargetSelected:Boolean = e.target.selected;
+				this.setLineThrough(isTargetSelected);
+				this.data.completed = isTargetSelected;
+				var evt:TodoListEvent = new TodoListEvent(TodoListEvent.TODO_STATE_CHANGE);
+				evt.item = this.data as Todo;
+				evt.oldValue = !isTargetSelected;
+				this.owner.dispatchEvent(evt);
+			}
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Shows, or hide, the line through the text.
+			 * 	
+			 * 	@param	showLineThrough	Indicates whether the line through the text is
+			 * 						 	visible (<code>true</code>), or not
+			 * 							(<code>false</code>).
+			 */
+			private function setLineThrough(showLineThrough:Boolean):void {
+				this.labelDisplay.setStyle("lineThrough", showLineThrough);
+			}
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Invoked each time the user clicks on the delete icon button.
+			 */
+			private function deleteBtnClickHandler(e:MouseEvent):void {
+				var evt:TodoListEvent = new TodoListEvent(TodoListEvent.TODO_DELETE);
+				evt.item = this.data as Todo;
+				this.owner.dispatchEvent(evt);
+			}
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Invoked each time the user moves a pointing device over the item
+			 * 	renderer.
+			 */
+			private function rollOverHandler(e:MouseEvent):void {
+				this.deleteBtn.visible = true;
+			}
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Invoked each time the user moves a pointing device away from the item
+			 * 	renderer.
+			 */
+			private function rollOutHandler(e:MouseEvent):void {
+				this.deleteBtn.visible = false;
+			}
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Invoked each time the usee double clicks on the label display to edit
+			 * 	the todo item.
+			 */
+			private function labelDblClickHandler(e:MouseEvent):void {
+				this.labelDisplay.visible = this.labelDisplay.includeInLayout = false;
+				_oldLabel = this.labelEditor.text = this.data.label;
+				this.labelEditor.editable = this.labelEditor.visible = 
+					this.labelEditor.includeInLayout = true;
+				this.focusManager.setFocus(this.labelEditor);
+			}
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Invoked each time the user presses a key, while editing a todo, to detect 
+			 * 	whether the edition over.
+			 */
+			private function editorKeyDownHandler(e:KeyboardEvent):void {
+				if (e.keyCode == Keyboard.ENTER) {
+					this.endEdition();
+					var evt:TodoListEvent = new TodoListEvent(TodoListEvent.TODO_CHANGE);
+					this.data.label = this.labelEditor.text;
+					evt.item = this.data as Todo;
+					evt.oldValue = _oldLabel;
+					this.owner.dispatchEvent(evt);
+				} else if (e.keyCode == Keyboard.ESCAPE) {
+					this.endEdition();
+					_oldLabel = "";
+				}
+			}
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	Finished the edition of the todo item, hides the text editor component
+			 * 	and show the label display component.
+			 */
+			private function endEdition():void {
+				this.focusManager.hideFocus();
+					this.labelDisplay.visible = this.labelDisplay.includeInLayout = true;
+					this.labelEditor.editable = this.labelEditor.visible = 
+						this.labelEditor.includeInLayout = false;
+			}
+		]]>
+	</fx:Script>
+	
+	<!-- Draws the separation line between two items -->
+	<primitives:TodoDottedLine
+		width="500">
+		<primitives:stroke>
+			<s:SolidColorStroke color="0x999999" weight="0.5"/>
+		</primitives:stroke>
+	</primitives:TodoDottedLine>
+	<!-- Draws the left-hand vertical red lines -->
+	<s:Line
+		xFrom="32" xTo="32" yFrom="0" yTo="{this.labelGroup.height+12}">
+		<s:stroke>
+			<s:SolidColorStroke color="0xFF0000" weight="1.0" alpha="0.15"/>
+		</s:stroke>
+	</s:Line>
+	<s:Line
+		xFrom="35" xTo="35" yFrom="0" yTo="{this.labelGroup.height+12}">
+		<s:stroke>
+			<s:SolidColorStroke color="0xFF0000" weight="1.0" alpha="0.15"/>
+		</s:stroke>
+	</s:Line>
+	<!-- The left-hand checkmark button -->
+	<s:ToggleButton id="checkmarkBtn"
+		skinClass="ui.skins.CheckmarkButtonSkin"
+		click="this.checkmarkClickHandler(event);" />
+	<!-- The right-hand delete button -->
+	<s:Button id="deleteBtn"
+		top="18" right="15"
+		visible="false"
+		skinClass="ui.skins.DeleteButtonSkin"
+		click="this.deleteBtnClickHandler(event);"/>
+	<!-- The label displays group -->
+	<s:VGroup id="labelGroup"
+		gap="0"
+		top="12" left="50" right="50">
+		<!-- The label display for this renderer -->
+		<s:Label id="labelDisplay"
+			textAlign="start"
+			fontSize="26" color="0x666666"
+			width="100%" 
+			maxDisplayedLines="{-1}" lineBreak="toFit"
+			doubleClickEnabled="true"
+			doubleClick="this.labelDblClickHandler(event);" />
+		<!-- The label editor for this renderer -->
+		<s:RichEditableText id="labelEditor"
+			textAlign="start"
+			fontSize="26" color="0x666666"
+			visible="false" includeInLayout="false" 
+			width="100%"
+			keyDown="this.editorKeyDownHandler(event);" />
+		<s:Spacer width="0" height="10"/>
+	</s:VGroup>
+</s:ItemRenderer>

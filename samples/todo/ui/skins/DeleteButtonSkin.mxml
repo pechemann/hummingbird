@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//	Simplified BSD License
+//	======================
+//	
+//	Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//	
+//	Redistribution and use in source and binary forms, with or without modification,
+//	are permitted provided that the following conditions are met:
+//	
+//	1. Redistributions of source code must retain the above copyright notice, this
+//		list of conditions and the following disclaimer. 
+//	
+//	2. Redistributions in binary form must reproduce the above copyright notice,
+//		this list of conditions and the following disclaimer in the documentation
+//		and/or other materials provided with the distribution. 
+//	
+//	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//	DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//	
+//	The views and conclusions contained in the software and documentation are those
+//	of the authors and should not be interpreted as representing official policies, 
+//	either expressed or implied, of the copyright holders.
+//	
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  DeleteButtonSkin.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The skin class for the delete button of the TodoListItemRenderer component.
+
+@see ui.renderer.TodoListItemRenderer
+-->
+<s:SparkButtonSkin
+	name="DeleteButtonSkin"
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:fb="http://ns.adobe.com/flashbuilder/2009"
+	minWidth="21" minHeight="21" 
+	alpha.disabledStates="0.5">
+	
+	<!-- Host component declaration:-->
+	<fx:Metadata>
+		<![CDATA[
+			/** 
+			 * @private
+			 */
+			[HostComponent("spark.components.Button")]
+		]]>
+	</fx:Metadata>
+	
+	<!-- Transitions declaration:-->
+	<s:transitions>
+		<s:Transition fromState="up" toState="over">
+			<s:Scale target="{this.mark}"  duration="150" scaleXTo="1.25" scaleYTo="1.25"/>
+		</s:Transition>
+		<s:Transition fromState="over" toState="up">
+			<s:Scale target="{this.mark}" duration="150" scaleXTo="1.0" scaleYTo="1.0"/>
+		</s:Transition>
+	</s:transitions>
+	
+	<fx:Script fb:purpose="styling">
+		<![CDATA[
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Public methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 */	
+			override public function get colorizeExclusions():Array {
+				return DeleteButtonSkin.EXCLUSIONS;
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private constants
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	The skin elements that should not be colorized.
+			 */	
+			private static const EXCLUSIONS:Array = ["labelDisplay"];
+		]]>
+	</fx:Script>
+	
+	<!-- States declaration: -->
+	<s:states>
+		<s:State name="up" />
+		<s:State name="over" stateGroups="overStates" />
+		<s:State name="down" stateGroups="downStates" />
+		<s:State name="disabled" stateGroups="disabledStates" />
+		<s:State name="upAndSelected" stateGroups="selectedStates, selectedUpStates" />
+		<s:State name="overAndSelected" stateGroups="overStates, selectedStates" />
+		<s:State name="downAndSelected" stateGroups="downStates, selectedStates" />
+		<s:State name="disabledAndSelected" stateGroups="selectedUpStates, disabledStates, selectedStates" />
+	</s:states>
+	
+	<!-- The placeholder for the deleting item: -->
+	<s:Group
+		width="20" height="20">
+		<!-- Draws the hit area -->
+		<s:Rect
+			left="-5" right="0" top="-5" bottom="0">
+			 <s:fill>
+				<s:SolidColor color="0x999999" alpha="0.0" />
+			</s:fill>
+		</s:Rect>
+		<!-- Draws the deleting item -->
+		<s:Group id="mark">
+			<!-- Filter for rendering the animated the glowing effect -->
+			<s:filters>
+				<s:GlowFilter id="glowEffect"
+					blurX="8.0" blurY="8.0" strength="2" color="0xFF0000" alpha.up="0.0" alpha.over="0.5"/>
+			</s:filters>
+			<s:Line
+				xFrom="0" xTo="10" yFrom="0" yTo="10">
+				<s:stroke>
+					<s:SolidColorStroke color="0xA88A8A" weight="6.0" caps="square" />
+				</s:stroke>
+			</s:Line>
+			<s:Line
+				xFrom="0" xTo="10" yFrom="10" yTo="0">
+				<s:stroke>
+					<s:SolidColorStroke color="0xA88A8A" weight="6.0" caps="square" />
+				</s:stroke>
+			</s:Line>
+		</s:Group>
+	</s:Group>
+</s:SparkButtonSkin>

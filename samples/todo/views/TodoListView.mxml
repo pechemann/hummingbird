@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//    Simplified BSD License
+//    ======================
+//    
+//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    
+//    Redistribution and use in source and binary forms, with or without modification,
+//    are permitted provided that the following conditions are met:
+//    
+//    1. Redistributions of source code must retain the above copyright notice, this
+//       list of conditions and the following disclaimer. 
+//    
+//    2. Redistributions in binary form must reproduce the above copyright notice,
+//       this list of conditions and the following disclaimer in the documentation
+//       and/or other materials provided with the distribution. 
+//    
+//    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//    
+//    The views and conclusions contained in the software and documentation are those
+//    of the authors and should not be interpreted as representing official policies, 
+//    either expressed or implied, of the copyright holders.
+//    
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  TodoListView.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+A view for displayin and managing a list of todo items.
+-->
+<s:Scroller
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	xmlns:display="ui.display.*"
+	implements="org.flashapi.hummingbird.view.IFlexView"
+	width="100%" height="100%"
+	creationComplete="this.creationCompleteHandler(event);">
+	
+	<s:VGroup
+		horizontalCenter="0" horizontalAlign="center"
+		width="100%" height="100%"
+		gap="0">
+		
+		<fx:Script>
+			<![CDATA[
+				import controllers.ITodoController;
+				import events.ModelEvent;
+				import events.TodoListEvent;
+				import events.TodoMenuEvent;
+				import models.ITodoModel;
+				import mx.events.FlexEvent;
+				import spark.events.IndexChangeEvent;
+				import utils.LogManager;
+				
+				//--------------------------------------------------------------------------
+				//
+				//  Dependencies injection
+				//
+				//--------------------------------------------------------------------------
+				
+				/**
+				 * 	The model of the application.
+				 */
+				[Model(alias="TodoModel")]
+				public var model:ITodoModel;
+				
+				/**
+				 * 	The controller of the application.
+				 */
+				[Controller(alias="TodoController")]
+				public var controller:ITodoController;
+				
+				//--------------------------------------------------------------------------
+				//
+				//  Public methods
+				//
+				//--------------------------------------------------------------------------
+				
+				/**
+				 *	@inheritDoc
+				 */
+				public function finalize():void { }
+				
+				//--------------------------------------------------------------------------
+				//
+				//  Private methods
+				//
+				//--------------------------------------------------------------------------
+				
+				///////////////////////////////////////////////////////////////
+				//  Initialization
+				///////////////////////////////////////////////////////////////
+				
+				/**
+				 *	Method invoked when the creation of the view is complete.
+				 */
+				private function creationCompleteHandler(e:FlexEvent):void {
+					LogManager.info("TodoListView: creationCompleteHandler()");
+					this.model.addEventListener(ModelEvent.TODO_LIST_CHANGE, this.todoListChangeHandler);
+					this.model.addEventListener(ModelEvent.TODO_DISPLAYED_TYPE_CHANGE, this.todoDisplayTypeChangeHandler);
+					this.model.addEventListener(ModelEvent.TODO_LIST_INIT, this.todoListInitHandler);
+					//--> Starts the MVC process:
+					this.controller.initTodoList();
+				}
+				
+				///////////////////////////////////////////////////////////////
+				//  Model handlers
+				///////////////////////////////////////////////////////////////
+				
+				/**
+				 *	Method invoked when the initial todo list has been loaded.
+				 */
+				private function todoListInitHandler(e:ModelEvent):void {
+					LogManager.info("TodoListView: todoListInitHandler()");
+					this.model.removeEventListener(ModelEvent.TODO_LIST_INIT, this.todoListInitHandler);
+					this.todoList.dataProvider = this.model.getTodoList();
+					this.setCompletedButtonState();
+				}
+				
+				/**
+				 *	Method invoked each time the todo list has changed.
+				 */
+				private function todoListChangeHandler(e:ModelEvent):void {
+					LogManager.info("TodoListView: todoListChangeHandler()");
+					this.header.resetPrompt();
+					this.setItemsNum();
+					this.setListVisibility();
+					var hasItems:Boolean = this.model.hasItems();
+					this.header.setCompletedButtonVisibility(hasItems);
+					this.setCompletedButtonState();
+					this.footer.setVisibility(hasItems);
+				}
+				
+				/**
+				 *	Method invoked each time the todo display type has changed.
+				 */
+				private function todoDisplayTypeChangeHandler(e:ModelEvent):void {
+					LogManager.info("TodoListView: todoDisplayTypeChangeHandler()");
+					this.setItemsNum();
+					this.setListVisibility();
+				}
+				
+				///////////////////////////////////////////////////////////////
+				//  User input handlers
+				///////////////////////////////////////////////////////////////
+				
+				/** 
+				 *	Method invoked when the user user want to create todo item.
+				 */
+				private function todoEnterHandler(e:FlexEvent):void {
+					LogManager.info("User input: todoEnterHandler()");
+					this.controller.addTodo(this.header.getTodoLabel());
+				}
+				
+				/** 
+				 *	Method invoked when the user want to delete a todo item.
+				 */
+				private function todoDeleteHandler(e:TodoListEvent):void {
+					LogManager.info("User input: todoDeleteHandler()");
+					this.controller.deleteTodo(e.item);
+				}
+				
+				/** 
+				 *	Method invoked when the user validates the edition of a todo
+				 * 	item.
+				 */
+				private function todoChangeHandler(e:TodoListEvent):void {
+					LogManager.info("User input: todoChangeHandler()");
+					this.controller.updateTodoLabel(e.item, String(e.oldValue));
+				}
+				
+				/** 
+				 *	Method invoked when the user changes the "completed" state of a 
+				 * 	todo item.
+				 */
+				private function todoStateChangeHandler(e:TodoListEvent):void {
+					LogManager.info("User input: todoStateChangeHandler()");
+					this.controller.updateTodoState(e.item, e.oldValue);
+				}
+				
+				/** 
+				 *	Method invoked when the user changes the "completed" state of  
+				 * 	all todo items.
+				 */
+				private function todoCompleteAllHandler(e:TodoListEvent):void {
+					LogManager.info("User input: todoCompleteAllHandler()");
+					this.controller.setTodoStates(e.allTodoCompleted);
+				}
+				
+				/** 
+				 *	Method invoked when the user changes the type of todo items to display.
+				 */
+				private function todoTypeIndexChangeHandler(e:IndexChangeEvent):void {
+					LogManager.info("User input: todoTypeIndexChangeHandler()");
+					this.controller.setTodoDisplayType(this.footer.getTodoDisplayType());
+				}
+				
+				/** 
+				 *	Method invoked when the user want to delete all the completed items
+				 * 	at once.
+				 */
+				private function deleteCompletedItemsHandler(e:TodoMenuEvent):void {
+					LogManager.info("User input: deleteCompletedItemsHandler()");
+					this.controller.deleteCompletedItems();
+				}
+				
+				///////////////////////////////////////////////////////////////
+				//  Utility methods
+				///////////////////////////////////////////////////////////////
+				
+				/**
+				 * 	A convenient method for setting the number of items in the footer
+				 * 	component.
+				 */
+				private function setItemsNum():void {
+					this.footer.setItemsNum(this.model.getItemsLeftNum(), this.model.getCompletedItemsNum());
+				}
+				
+				/**
+				 * 	A convenient method for setting the visibility of the todo list
+				 * 	component.
+				 */
+				private function setListVisibility():void {
+					this.todoList.setVisibility(this.model.hasDisplayedItems());
+				}
+				
+				/**
+				 * 	A convenient method for setting the state of the "Completed" button
+				 * 	in the header component.
+				 */
+				private function setCompletedButtonState():void {
+					this.header.setCompletedButtonState(this.model.areAllItemsCompleted());
+				}
+			]]>
+		</fx:Script>
+		
+		<s:Spacer height="50"/>
+		<!-- Title component: -->
+		<display:Title id="title"/>
+		<s:Spacer height="20"/>
+		<s:Group
+			width="500">
+			<s:filters>
+				<s:DropShadowFilter
+					distance="15" angle="90" blurX="50" blurY="60" alpha="0.35" />
+			</s:filters>
+			<!-- Header component: -->
+			<display:Header id="header"
+				enter="this.todoEnterHandler(event);"
+				todoCompleteAll="this.todoCompleteAllHandler(event);" />
+			<!-- TodoList component: -->
+			<display:TodoList id="todoList"
+				top="78"
+				todoDelete="this.todoDeleteHandler(event);"
+				todoChange="this.todoChangeHandler(event);"
+				todoStateChange="this.todoStateChangeHandler(event);"/>
+		</s:Group>
+		<!-- Footer component: -->
+		<display:Footer id="footer"
+			change="this.todoTypeIndexChangeHandler(event);"
+			deleteCompletedItems="this.deleteCompletedItemsHandler(event);"/>
+		<s:Spacer height="50"/>
+		<!-- Legend component: -->
+		<display:Legend/>
+	</s:VGroup>
+</s:Scroller>

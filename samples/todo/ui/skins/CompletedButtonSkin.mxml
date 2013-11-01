@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//	Simplified BSD License
+//	======================
+//	
+//	Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//	
+//	Redistribution and use in source and binary forms, with or without modification,
+//	are permitted provided that the following conditions are met:
+//	
+//	1. Redistributions of source code must retain the above copyright notice, this
+//		list of conditions and the following disclaimer. 
+//	
+//	2. Redistributions in binary form must reproduce the above copyright notice,
+//		this list of conditions and the following disclaimer in the documentation
+//		and/or other materials provided with the distribution. 
+//	
+//	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//	DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//	
+//	The views and conclusions contained in the software and documentation are those
+//	of the authors and should not be interpreted as representing official policies, 
+//	either expressed or implied, of the copyright holders.
+//	
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  CompletedButtonSkin.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The skin class for the deleting button of the Footer component.
+
+@see ui.renderer.Footer
+-->
+<s:SparkButtonSkin
+	name="CompletedButtonSkin"
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:fb="http://ns.adobe.com/flashbuilder/2009"
+	minWidth="21" minHeight="21" 
+	alpha.disabled="0.5">
+	
+	<!-- Host component declaration:-->
+	<fx:Metadata>
+		<![CDATA[
+			/** 
+			 * @private
+			 */
+			[HostComponent("spark.components.Button")]
+		]]>
+	</fx:Metadata>
+	
+	<fx:Script fb:purpose="styling">
+		<![CDATA[		 
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Public methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 */	
+			override public function get colorizeExclusions():Array {
+				return CompletedButtonSkin.EXCLUSIONS;
+			}
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private constants
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	@private
+			 * 
+			 * 	The skin elements that should not be colorized.
+			 */	
+			private static const EXCLUSIONS:Array = ["labelDisplay"];
+		]]>
+	</fx:Script>
+		
+	<!-- States declaration:-->
+	<s:states>
+		<s:State name="up" />
+		<s:State name="over" />
+		<s:State name="down" />
+		<s:State name="disabled" />
+	</s:states>
+	
+	<!-- Renders thetop inner emboss effect -->
+	<s:Rect
+		left="1" right="1" top="0" bottom="1" radiusX="2">
+		<s:fill>
+			<s:SolidColor color="0xBABABA" />
+		</s:fill>
+	</s:Rect>
+	<!-- Draws the button background -->
+	<s:Rect
+		left="1" right="1" top="1" bottom="1" radiusX="2">
+		<s:fill>
+			<s:SolidColor color.up="0xD4D4D4" color.over="0xC8C8C8" color.down="0xC8C8C8"/>
+		</s:fill>
+	</s:Rect>
+	<!-- The label text field -->
+	<s:Label id="labelDisplay"
+		textAlign="center"
+		maxDisplayedLines="1"
+		horizontalCenter="0" verticalCenter="1" verticalAlign="middle"
+		left="10" right="10" top="2" bottom="2">
+	</s:Label>
+</s:SparkButtonSkin>

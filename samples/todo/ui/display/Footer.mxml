@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//    Simplified BSD License
+//    ======================
+//    
+//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    
+//    Redistribution and use in source and binary forms, with or without modification,
+//    are permitted provided that the following conditions are met:
+//    
+//    1. Redistributions of source code must retain the above copyright notice, this
+//       list of conditions and the following disclaimer. 
+//    
+//    2. Redistributions in binary form must reproduce the above copyright notice,
+//       this list of conditions and the following disclaimer in the documentation
+//       and/or other materials provided with the distribution. 
+//    
+//    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//    
+//    The views and conclusions contained in the software and documentation are those
+//    of the authors and should not be interpreted as representing official policies, 
+//    either expressed or implied, of the copyright holders.
+//    
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  Footer.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The footer component. Contains the bottom menu of the application.
+-->
+<s:Group
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	xmlns:display="ui.display.*"
+	visible="false" includeInLayout="false"
+	width="500">
+	
+	<!-- Events declaration: -->
+	<fx:Metadata> 
+		[Event(name="change", type="spark.events:IndexChangeEvent")]
+		[Event(name="deleteCompletedItems", type="events.TodoMenuEvent")]
+	</fx:Metadata>
+	
+	<fx:Script> 
+		<![CDATA[
+		
+		import events.TodoMenuEvent;
+		import flash.events.MouseEvent;
+		import spark.events.IndexChangeEvent;
+		import flashx.textLayout.conversion.TextConverter;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Sets the visibility of this component.
+		 * 
+		 * 	@param	hasItems	Indicates whether the
+		 */
+		public function setVisibility(hasItems:Boolean):void {
+			this.visible = this.includeInLayout = hasItems;
+		}
+		
+		/**
+		 * 	Returns the todo display type as defined by the user.
+		 * 
+		 * 	@return A constant of the <code>TodoDisplayType</code> class.
+		 * 
+		 * 	@see constants.TodoDisplayType
+		 */
+		public function getTodoDisplayType():uint {
+			return this.todoTypeMenu.selectedIndex;
+		}
+		
+		/**
+		 * 	Sets the todo display type as defined in the model.
+		 * 
+		 * 	@param todoDisplayType 	A constant of the <code>TodoDisplayType</code>
+		 * 							class.
+		 * 
+		 * 	@see constants.TodoDisplayType
+		 */
+		public function setTodoDisplayType(todoDisplayType:uint):void {
+			this.todoTypeMenu.selectedIndex = todoDisplayType;
+		}
+		
+		/**
+		 * 	Sets the number of left and completed items as defined in the model.
+		 * 
+		 * 	@param itemsLeftNum 	The number of items left.
+		 * 	@param completedItemsNum 	The number of completed items.
+		 */
+		public function setItemsNum(itemsLeftNum:uint, completedItemsNum:uint):void {
+			var hasItemsLeft:Boolean = Boolean(itemsLeftNum > 1);
+			var itemsLeftTxt:String = hasItemsLeft ?  " items left" : " item left";
+			if (completedItemsNum > 0) {
+				this.deleteCompleteBtn.label = "Clear completed (" + completedItemsNum + ")";
+				this.deleteCompleteBtn.visible = true;
+			} else {
+				this.deleteCompleteBtn.visible = false;
+				this.deleteCompleteBtn.label = "";
+			}
+			var flow:XML =
+				<TextFlow xmlns='http://ns.adobe.com/textLayout/2008'>
+					<p><span fontWeight='bold'>{itemsLeftNum}</span>{itemsLeftTxt}</p>
+				</TextFlow>;
+			this.itemsLeftLabel.textFlow =
+				TextConverter.importToFlow(flow, TextConverter.TEXT_LAYOUT_FORMAT);
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Invoked each time the user changes the type of items to display.
+		 */
+		private function changeHandler(e:IndexChangeEvent):void {
+			this.dispatchEvent(e);
+		}
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Invoked each time the user clicks on the "complete all" button.
+		 */
+		private function deleteCompleteClickHandler(e:MouseEvent):void {
+			this.dispatchEvent(new TodoMenuEvent(TodoMenuEvent.DELETE_COMPLETED_ITEMS));
+		}
+		]]>
+	</fx:Script>
+	
+	<!-- Draws the top rectangle shape -->
+	<s:Rect left="2" right="2" top="1" height="3">
+		 <s:fill>
+			<s:SolidColor color="0xECECEC"/>
+		</s:fill>
+		<s:stroke>
+			<s:SolidColorStroke color="0xCCCCCC" weight="1.0"/>
+		</s:stroke>
+	</s:Rect>
+	<!-- Menu -->
+	<s:BorderContainer
+		left="5" right="5" top="5"
+		height="30"
+		borderVisible="false"
+		backgroundColor="0xececec">
+		<!-- Displays the number of items left -->
+		<s:RichText id="itemsLeftLabel"
+			fontSize="13" color="0x666666"
+			top="9" left="10" />
+		<!-- Todo display type menu -->
+		<s:ButtonBar id="todoTypeMenu"
+			requireSelection="true"
+			horizontalCenter="0" top="9"
+			skinClass="ui.skins.FooterButtonBarSkin"
+			change="this.changeHandler(event);">
+			<s:dataProvider>
+				<s:ArrayList source="[All,Active,Completed]" />
+			</s:dataProvider>
+		</s:ButtonBar>
+		<!-- Delete all completed items -->
+		<s:Button id="deleteCompleteBtn"
+			visible="false" label="foo bar"
+			top="4" right="10"
+			fontSize="11" color="0x888888"
+			skinClass="ui.skins.CompletedButtonSkin"
+			click="this.deleteCompleteClickHandler(event);" />
+	</s:BorderContainer>
+</s:Group>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//    Simplified BSD License
+//    ======================
+//    
+//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    
+//    Redistribution and use in source and binary forms, with or without modification,
+//    are permitted provided that the following conditions are met:
+//    
+//    1. Redistributions of source code must retain the above copyright notice, this
+//       list of conditions and the following disclaimer. 
+//    
+//    2. Redistributions in binary form must reproduce the above copyright notice,
+//       this list of conditions and the following disclaimer in the documentation
+//       and/or other materials provided with the distribution. 
+//    
+//    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//    
+//    The views and conclusions contained in the software and documentation are those
+//    of the authors and should not be interpreted as representing official policies, 
+//    either expressed or implied, of the copyright holders.
+//    
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  Legend.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 31/10/2013 14:37
+ *  @see http://www.flashapi.org/
+ */
+
+The legend component. Contains the bottom information and links of the application.
+-->
+<s:RichEditableText
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	width="100%"
+	focusEnabled="false" editable="false">
+	<s:filters>
+		<s:DropShadowFilter distance="2" angle="45" color="0xFFFFFF" />
+	</s:filters>
+	<s:textFlow>
+		<s:TextFlow color="0x999999" fontSize="12">
+			<s:linkNormalFormat>
+				<s:TextLayoutFormat color="0x999999" textDecoration="underline" />
+			</s:linkNormalFormat>
+			<s:p paragraphSpaceAfter="20" textAlign="center">Double-click to edit a todo - Escape to cancel</s:p>
+			<s:p paragraphSpaceAfter="5" textAlign="center">Written by <s:a href="https://github.com/flashapi/hummingbird" target="_blank">Pascal ECHEMANN</s:a></s:p>
+			<s:p><!-- Bug-fix: If this empty paragraph is removed, all the links become not clickable --></s:p>
+			<s:p textAlign="center">Part of <s:a href="http://flashapi.org/hummingbird/" target="_blank">Hummingbird MVC Framework</s:a></s:p>
+		</s:TextFlow>
+	</s:textFlow>
+   </s:RichEditableText>
