@@ -35,49 +35,29 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////
-//  Main.mxml
+//  Title.mxml
 ///////////////////////////////////////////////////////////////
 
 /**
  *  @author Pascal ECHEMANN
- *  @version 1.0.0, 31/10/2013 14:37
+ *  @version 1.0.0, 02/11/2013 14:32
  *  @see http://www.flashapi.org/
  */
 
-The Main.mxml class represents the entry point of the TodoList application.
+The title component for the AutoComplete application.
 -->
-<s:Application
-	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:display="ui.display.*"
-	xmlns:context="application.*"
-	creationComplete="this.creationCompleteHandler(event);">
-	
-	<!-- Hummingbird Framework declaration: -->
-	<fx:Declarations>
-		<context:AppContext id="appContext"/>
-	</fx:Declarations>
-	
-	<!-- Hummingbird Framework initialization: -->
-	<fx:Script>
-		<![CDATA[
-			import mx.core.mx_internal;
-			import mx.events.FlexEvent;
-			import org.flashapi.hummingbird.HummingbirdFX; 
-			import utils.LogManager;
-			
-			use namespace mx_internal;
-			
-			/**
-			 *	Initializes the application
-			 */
-			private function creationCompleteHandler(e:FlexEvent):void {
-				LogManager.init(mx_internal::VERSION);
-				HummingbirdFX.setApplicationContext(this.appContext, this);
-			}
-		]]>
-		</fx:Script>
-	
-	<!-- Application background: -->
-	<display:Background/>
-</s:Application>
+<s:RichText
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	width="100%">
+	<s:filters>
+		<s:BevelFilter distance="0.5" highlightColor="0x000000" shadowColor="0xffffff"/>
+	</s:filters>
+	<s:textFlow>
+		<s:TextFlow textAlign="center" color="0x999999" fontWeight="bold" >
+			<s:p fontSize="60" paragraphSpaceAfter="20">Hummingbird</s:p>
+			<s:p fontSize="30">AutoComplete Example</s:p>
+		</s:TextFlow>
+	</s:textFlow>
+</s:RichText>

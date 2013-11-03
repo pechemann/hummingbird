@@ -32,30 +32,25 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package services {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  ITagsService.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
+	import org.flashapi.hummingbird.service.IService;
 	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The <code>ITagsService</code> interface represents the facade for the 
+	 * 	service used to access data for the auto-completion.
 	 */
-	public class LogManager {
+	public interface ITagsService extends IService {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,56 +59,15 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Initializes the application logger.
+		 * 	Compares the user input value to all of the stored tags.
 		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
-		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
-			}
-		}
-		
-		/**
-		 * 	Sends an information message to the logging output.
+		 * 	@param	value		The user input value.
+		 * 	@param	caseMode	Indicates the case mode of the application. A constant
+		 * 						of the <code>CaseMode</code> class.
 		 * 
-		 * 	@param	message	The message to log.
+		 *	@return	A collection of <code>String</code> objects that represents all
+		 * 			of the matching tags.
 		 */
-		public static function info(message:String):void {
-			_logger.info(message);
-		}
-		
-		/**
-		 * 	Sends an error message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function error(message:String):void {
-			_logger.error(message);
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	The reference to the application logger.
-		 */
-		private static var _logger:ILogger;
+		function getMatchingTags(value:String, caseMode:uint):Vector.<String>;
 	}
 }

@@ -32,88 +32,38 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package constants {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  CaseMode.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
-	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The <code>CaseMode</code> class represents a collection of values that  
+	 *  indicates whether the auto-completion is case sensitive, or not.
 	 */
-	public class LogManager {
+	public final class CaseMode {
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public methods
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	Initializes the application logger.
-		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
-		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
-			}
-		}
-		
-		/**
-		 * 	Sends an information message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function info(message:String):void {
-			_logger.info(message);
-		}
-		
-		/**
-		 * 	Sends an error message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function error(message:String):void {
-			_logger.error(message);
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
+		//  Public constants
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	@private
-		 * 
-		 * 	The reference to the application logger.
+		 * 	Indicates that the auto-completion is case sensitive.
 		 */
-		private static var _logger:ILogger;
+		public static const CASE_SENSITIVE:uint = 0;
+		
+		/**
+		 * 	Indicates that the auto-completion is case insensitive.
+		 */
+		public static const CASE_INSENSITIVE:uint = 1;
 	}
 }

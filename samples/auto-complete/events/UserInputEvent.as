@@ -32,30 +32,83 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package events {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  UserInputEvent.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
+	import flash.events.Event;
 	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The <code>UserInputEvent</code> class represents event objects that are 
+	 * 	specific to the <code>AutoComplete</code> control.
+	 * 
+	 * 	@see ui.display.AutoComplete
 	 */
-	public class LogManager {
+	public class UserInputEvent extends Event {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Constructor
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Constructor.	Creates a new <code>UserInputEvent</code> instance with 
+		 * 					the specified parameters.
+		 * 	
+		 * @param	type		The type of the event, accessible as <code>Event.type</code>.
+		 * @param	bubbles		Determines whether the <code>Event</code> object
+		 * 						participates in the bubbling stage of the event flow.
+		 * 						The default value is <code>false</code>.
+		 * @param	cancelable	Determines whether the <code>Event</code> object can
+		 * 						be canceled. The default values is <code>false</code>.
+		 */
+		public function UserInputEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false) {
+			super(type, bubbles, cancelable);
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	The text for this component.
+		 */
+		public var text:String;
+		
+		/**
+		 * 	The new case mode of the application. A constant of the <code>CaseMode</code>
+		 * 	class.
+		 * 
+		 * 	@see constants.CaseMode
+		 */
+		public var caseMode:uint;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Event types
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Dispatched when the user types a text in the input field.
+		 */
+		public static const TEXT_EDIT:String = "textEdit";
+		
+		/**
+		 * 	Dispatched when the user changes the case mode of the application.
+		 */
+		public static const CASE_MODE_CHANGE:String = "caseModeChange";
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,56 +117,20 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Initializes the application logger.
-		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
+		 * @private
 		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
-			}
+		override public function clone():Event {
+			var evt:UserInputEvent = new UserInputEvent(this.type, this.bubbles, this.cancelable);
+			evt.text = this.text;
+			evt.caseMode = this.caseMode;
+			return evt;
 		}
 		
 		/**
-		 * 	Sends an information message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
+		 * @private
 		 */
-		public static function info(message:String):void {
-			_logger.info(message);
+		override public function toString():String {
+			return this.formatToString("UserInputEvent", "type", "bubbles", "cancelable", "text", "caseMode");
 		}
-		
-		/**
-		 * 	Sends an error message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function error(message:String):void {
-			_logger.error(message);
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	The reference to the application logger.
-		 */
-		private static var _logger:ILogger;
 	}
 }

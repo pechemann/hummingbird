@@ -32,30 +32,29 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package models {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  AppModel.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
+	import constants.CaseMode;
+	import events.ModelEvent;
+	import mx.collections.ArrayCollection;
+	import org.flashapi.hummingbird.model.AbstractModel;
 	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The <code>AppModel</code> class represents the default model of your
+	 * 	application.
 	 */
-	public class LogManager {
+	[Qualifier(alias="AppModel")]
+	public class AppModel extends AbstractModel implements IAppModel {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,43 +63,52 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Initializes the application logger.
-		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
+		 * 	@inheritDoc
 		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
-			}
+		public function getCaseMode():uint {
+			return _caseMode;
 		}
 		
 		/**
-		 * 	Sends an information message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
+		 * 	@inheritDoc
 		 */
-		public static function info(message:String):void {
-			_logger.info(message);
+		public function setCaseMode(caseMode:uint):void {
+			_caseMode = caseMode;
 		}
 		
 		/**
-		 * 	Sends an error message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
+		 * 	@inheritDoc
 		 */
-		public static function error(message:String):void {
-			_logger.error(message);
+		public function hasMatchingTags():Boolean {
+			return Boolean(_tagColl.length > 0);
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function getTagCollection():ArrayCollection {
+			return _tagColl;
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function removeAllTags():void {
+			_tagColl.removeAll();
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function addTag(tag:String):void {
+			_tagColl.addItem(tag);
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function tagCollectionUpdateComplete():void {
+			this.dispatchEvent(new ModelEvent(ModelEvent.MODEL_UPDATE));
 		}
 		
 		//--------------------------------------------------------------------------
@@ -110,10 +118,15 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
+		 * 	Stores the case mode of the application.
+		 */
+		private var _caseMode:uint = CaseMode.CASE_SENSITIVE;
+		
+		/**
 		 * 	@private
 		 * 
-		 * 	The reference to the application logger.
+		 * 	The collection of tags to be displayed by the AutoComplete component.
 		 */
-		private static var _logger:ILogger;
+		private var _tagColl:ArrayCollection = new ArrayCollection();
 	}
 }

@@ -32,30 +32,25 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package controllers {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  IAppController.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
+	import org.flashapi.hummingbird.controller.IController;
 	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The <code>IAppController</code> interface represents the facade for the default 
+	 * 	controller of your application.
 	 */
-	public class LogManager {
+	public interface IAppController extends IController {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,56 +59,20 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Initializes the application logger.
+		 * 	Tells the controller the text curently displayed on the face of the
+		 * 	text field.
 		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
+		 * 	@param	value	The text curently typed by the user.
 		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
-			}
-		}
+		function setInputValue(value:String):void;
 		
 		/**
-		 * 	Sends an information message to the logging output.
+		 * 	Sets the case mode of the auto-completion.
 		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function info(message:String):void {
-			_logger.info(message);
-		}
-		
-		/**
-		 * 	Sends an error message to the logging output.
+		 *	@param	caseMode A constant of the <code>CaseMode</code> class.
 		 * 
-		 * 	@param	message	The message to log.
+		 * 	@see constants.CaseMode
 		 */
-		public static function error(message:String):void {
-			_logger.error(message);
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	The reference to the application logger.
-		 */
-		private static var _logger:ILogger;
+		function setCaseMode(caseMode:uint):void;
 	}
 }

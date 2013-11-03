@@ -35,49 +35,26 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////
-//  Main.mxml
+//  Background.mxml
 ///////////////////////////////////////////////////////////////
 
 /**
  *  @author Pascal ECHEMANN
- *  @version 1.0.0, 31/10/2013 14:37
+ *  @version 1.0.0, 02/11/2013 14:32
  *  @see http://www.flashapi.org/
  */
 
-The Main.mxml class represents the entry point of the TodoList application.
+The background component for the AutoComplete application.
 -->
-<s:Application
-	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:display="ui.display.*"
-	xmlns:context="application.*"
-	creationComplete="this.creationCompleteHandler(event);">
-	
-	<!-- Hummingbird Framework declaration: -->
-	<fx:Declarations>
-		<context:AppContext id="appContext"/>
-	</fx:Declarations>
-	
-	<!-- Hummingbird Framework initialization: -->
-	<fx:Script>
-		<![CDATA[
-			import mx.core.mx_internal;
-			import mx.events.FlexEvent;
-			import org.flashapi.hummingbird.HummingbirdFX; 
-			import utils.LogManager;
-			
-			use namespace mx_internal;
-			
-			/**
-			 *	Initializes the application
-			 */
-			private function creationCompleteHandler(e:FlexEvent):void {
-				LogManager.init(mx_internal::VERSION);
-				HummingbirdFX.setApplicationContext(this.appContext, this);
-			}
-		]]>
-		</fx:Script>
-	
-	<!-- Application background: -->
-	<display:Background/>
-</s:Application>
+<s:Rect
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	top="0" left="0" right="0" bottom="0">
+	<s:fill>
+		<s:LinearGradient rotation="45">
+			<s:GradientEntry color="0xffffff"/>
+			<s:GradientEntry color="0x999999"/>
+		</s:LinearGradient>
+	</s:fill>
+</s:Rect>

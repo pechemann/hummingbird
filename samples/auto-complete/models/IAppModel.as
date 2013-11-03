@@ -32,30 +32,26 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package models {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  IAppModel.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
+	import mx.collections.ArrayCollection;
+	import org.flashapi.hummingbird.model.IModel;
 	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The <code>IAppModel</code> interface represents the facade for the default 
+	 * 	model of your application.
 	 */
-	public class LogManager {
+	public interface IAppModel extends IModel {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,56 +60,56 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Initializes the application logger.
+		 * 	Returns the case mode of the auto-completion. The default value is
+		 * 	 <code>CaseMode.CASE_SENSITIVE</code>.
 		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
+		 *	@return	A constant of the <code>CaseMode</code> class.
+		 * 
+		 * 	@see constants.CaseMode
 		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
-			}
-		}
+		function getCaseMode():uint;
 		
 		/**
-		 * 	Sends an information message to the logging output.
+		 * 	Sets the case mode of the auto-completion.
 		 * 
-		 * 	@param	message	The message to log.
+		 *	@param	caseMode A constant of the <code>CaseMode</code> class.
+		 * 
+		 * 	@see constants.CaseMode
 		 */
-		public static function info(message:String):void {
-			_logger.info(message);
-		}
+		function setCaseMode(caseMode:uint):void;
 		
 		/**
-		 * 	Sends an error message to the logging output.
+		 * 	Returns a <code>Boolean</code> value that indicates whether the user input 
+		 *	has matching tags (<code>true</code>), or not (<code>false</code>).
 		 * 
-		 * 	@param	message	The message to log.
+		 * 	@return	<code>true</code> if the user input has matching tags;
+		 * 			<code>false</code> otherwise.
 		 */
-		public static function error(message:String):void {
-			_logger.error(message);
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
+		function hasMatchingTags():Boolean;
 		
 		/**
-		 * 	@private
+		 * 	Returns static the collection of all the tags that can be used for
+		 * 	auto-completion.
 		 * 
-		 * 	The reference to the application logger.
+		 * 	@return	A <code>Vector</code> of <code>String</code> objects.
 		 */
-		private static var _logger:ILogger;
+		function getTagCollection():ArrayCollection;
+		
+		/**
+		 * 	Removes all the tags from the auto-completion collection.
+		 */
+		function removeAllTags():void;
+		
+		/**
+		 * 	Add a tag to the auto-completion collection.
+		 * 
+		 * 	@param tag the value of the tag item to add to the collection.
+		 */
+		function addTag(tag:String):void;
+		
+		/**
+		 * 	Method invoked by the controller at the end of the collection update.
+		 */
+		function tagCollectionUpdateComplete():void;
 	}
 }

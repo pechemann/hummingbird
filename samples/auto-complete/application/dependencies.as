@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /////////////////////////////////////////////////////////////////////////////////////
 //
 //    Simplified BSD License
@@ -34,50 +32,35 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////
-//  Main.mxml
-///////////////////////////////////////////////////////////////
+// -----------------------------------------------------------
+//  dependencies.as
+// -----------------------------------------------------------
 
 /**
  *  @author Pascal ECHEMANN
- *  @version 1.0.0, 31/10/2013 14:37
+ *  @version 1.0.0, 02/11/2013 14:32
  *  @see http://www.flashapi.org/
  */
 
-The Main.mxml class represents the entry point of the TodoList application.
--->
-<s:Application
-	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:display="ui.display.*"
-	xmlns:context="application.*"
-	creationComplete="this.creationCompleteHandler(event);">
-	
-	<!-- Hummingbird Framework declaration: -->
-	<fx:Declarations>
-		<context:AppContext id="appContext"/>
-	</fx:Declarations>
-	
-	<!-- Hummingbird Framework initialization: -->
-	<fx:Script>
-		<![CDATA[
-			import mx.core.mx_internal;
-			import mx.events.FlexEvent;
-			import org.flashapi.hummingbird.HummingbirdFX; 
-			import utils.LogManager;
-			
-			use namespace mx_internal;
-			
-			/**
-			 *	Initializes the application
-			 */
-			private function creationCompleteHandler(e:FlexEvent):void {
-				LogManager.init(mx_internal::VERSION);
-				HummingbirdFX.setApplicationContext(this.appContext, this);
-			}
-		]]>
-		</fx:Script>
-	
-	<!-- Application background: -->
-	<display:Background/>
-</s:Application>
+//--> Dependencies includes:
+import controllers.AppController;
+import models.AppModel;
+import services.impl.TagsService;
+
+/**
+ * 	The class reference for the default model of the application.
+ */
+[RegisterClass(type="models.AppModel")]
+public var AppModelRef:Class = AppModel;
+
+/**
+ * 	The class reference for the default controller of the application.
+ */
+[RegisterClass(type="controllers.AppController")]
+public var AppControllerRef:Class = AppController;
+
+/**
+ * 	The class reference for the default service of the application.
+ */
+[RegisterClass(type="services.impl.TagsService")]
+public var TagsServiceRef:Class = TagsService;

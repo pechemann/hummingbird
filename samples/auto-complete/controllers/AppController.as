@@ -32,30 +32,47 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package controllers {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  AppController.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
+	import constants.CaseMode;
+	import models.IAppModel;
+	import org.flashapi.hummingbird.controller.AbstractController;
+	import services.ITagsService;
 	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The <code>AppController</code> class represents the default controller of 
+	 * 	your application.
 	 */
-	public class LogManager {
+	[Qualifier(alias="AppController")]
+	public final class AppController extends AbstractController implements IAppController {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Dependencies injection
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	The model of the application.
+		 */
+		[Model(alias="AppModel")]
+		public var model:IAppModel;
+		
+		/**
+		 * 	The main service of the application.
+		 */
+		[Service(alias="TagsService")]
+		public var service:ITagsService;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,56 +81,26 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Initializes the application logger.
-		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
+		 * 	@inheritDoc
 		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
+		public function setInputValue(value:String):void {
+			this.model.removeAllTags();
+			if (value != "") {
+				var matchingTags:Vector.<String> = 
+					this.service.getMatchingTags(value, this.model.getCaseMode());
+				var len:int = matchingTags.length - 1;
+				for (; len >= 0; len--) {
+					this.model.addTag(matchingTags[len]);
+				}
 			}
+			this.model.tagCollectionUpdateComplete();
 		}
 		
 		/**
-		 * 	Sends an information message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
+		 * 	@inheritDoc
 		 */
-		public static function info(message:String):void {
-			_logger.info(message);
+		public function setCaseMode(caseMode:uint):void {
+			this.model.setCaseMode(caseMode);
 		}
-		
-		/**
-		 * 	Sends an error message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function error(message:String):void {
-			_logger.error(message);
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	The reference to the application logger.
-		 */
-		private static var _logger:ILogger;
 	}
 }

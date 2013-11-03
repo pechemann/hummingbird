@@ -32,30 +32,37 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package utils {
+package application {
 	
 	// -----------------------------------------------------------
-	//  LogManager.as
+	//  AppContext.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 31/10/2013 14:37
+	 *  @version 1.0.0, 02/11/2013 14:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import mx.logging.targets.TraceTarget;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import org.flashapi.hummingbird.logging.FlexLogAdapter;
-	import org.flashapi.hummingbird.logging.LogEvent;
-	import org.flashapi.hummingbird.logging.Logger;
+	import org.flashapi.hummingbird.core.AbstractApplicationContext;
+	import org.flashapi.hummingbird.HummingbirdFX;
+	import views.AutoCompleteView;
 	
 	/**
-	 * 	A convenient class for providing a global access to the application logger.
+	 * 	The MVC context of the AutoComplete application.
 	 */
-	public class LogManager {
+	public class AppContext extends AbstractApplicationContext {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Dependencies includes
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	References for the dependencies injection.
+		 */
+		include "dependencies.as"
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,56 +71,12 @@ package utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Initializes the application logger.
-		 * 
-		 * 	@param flexVersion The version of the Flex SDK.
+		 * 	@inheritDoc
 		 */
-		public static function init(flexVersion:String):void {
-			if (_logger == null) {
-				var logTarget:TraceTarget = new TraceTarget();
-				logTarget.level = LogEventLevel.ALL;
-				logTarget.includeDate = true;
-				logTarget.includeTime = true;
-				logTarget.includeLevel = true;
-				Log.addTarget(logTarget);
-				_logger = Log.getLogger("TraceTarget");
-				var logAdapter:FlexLogAdapter = new FlexLogAdapter();
-				logAdapter.setCategory("TraceTarget");
-				Logger.getInstance().addEventListener(LogEvent.LOG, logAdapter.logEvent);
-				LogManager.info("LogManager initialized");
-				LogManager.info("Flex SDK version: " + flexVersion);
-			}
+		override public function start():void {
+			HummingbirdFX.addToScene(
+				HummingbirdFX.getFactory().createView(AutoCompleteView)
+			);
 		}
-		
-		/**
-		 * 	Sends an information message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function info(message:String):void {
-			_logger.info(message);
-		}
-		
-		/**
-		 * 	Sends an error message to the logging output.
-		 * 
-		 * 	@param	message	The message to log.
-		 */
-		public static function error(message:String):void {
-			_logger.error(message);
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	The reference to the application logger.
-		 */
-		private static var _logger:ILogger;
 	}
 }

@@ -35,49 +35,23 @@
 /////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////
-//  Main.mxml
+//  Logo.mxml
 ///////////////////////////////////////////////////////////////
 
 /**
  *  @author Pascal ECHEMANN
- *  @version 1.0.0, 31/10/2013 14:37
+ *  @version 1.0.0, 02/11/2013 14:32
  *  @see http://www.flashapi.org/
  */
 
-The Main.mxml class represents the entry point of the TodoList application.
+The Hummingbird logo display.
 -->
-<s:Application
-	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:display="ui.display.*"
-	xmlns:context="application.*"
-	creationComplete="this.creationCompleteHandler(event);">
-	
-	<!-- Hummingbird Framework declaration: -->
-	<fx:Declarations>
-		<context:AppContext id="appContext"/>
-	</fx:Declarations>
-	
-	<!-- Hummingbird Framework initialization: -->
-	<fx:Script>
-		<![CDATA[
-			import mx.core.mx_internal;
-			import mx.events.FlexEvent;
-			import org.flashapi.hummingbird.HummingbirdFX; 
-			import utils.LogManager;
-			
-			use namespace mx_internal;
-			
-			/**
-			 *	Initializes the application
-			 */
-			private function creationCompleteHandler(e:FlexEvent):void {
-				LogManager.init(mx_internal::VERSION);
-				HummingbirdFX.setApplicationContext(this.appContext, this);
-			}
-		]]>
-		</fx:Script>
-	
-	<!-- Application background: -->
-	<display:Background/>
-</s:Application>
+<s:Image
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	source="@Embed(source='../assets/hummingbird-logo-256.png')">
+	<s:filters>
+		<s:DropShadowFilter alpha="0.25" />
+	</s:filters>
+</s:Image>
