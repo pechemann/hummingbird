@@ -40,11 +40,11 @@ package org.flashapi.hummingbird.model {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.1, 03/11/2013 17:11
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import flash.events.EventDispatcher;
+	import org.flashapi.hummingbird.core.LoggableObject;
 
 	//--------------------------------------------------------------------------
 	//
@@ -63,7 +63,7 @@ package org.flashapi.hummingbird.model {
 	/**
 	 * 	Convenient superclass for model implementations.
 	 */
-	public class AbstractModel extends EventDispatcher implements IModel {
+	public class AbstractModel extends LoggableObject implements IModel {
 		
 		//--------------------------------------------------------------------------
 		//

@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.logging {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 06/10/2013 16:35
+	 *  @version 1.0.1, 03/11/2013 18:45
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -127,6 +127,13 @@ package org.flashapi.hummingbird.logging {
 			this.createLog(LogLevel.WARN, message, rest);
 		}
 		
+		/**
+		 *  @inheritDoc
+		 */
+		public function debug(message:String, ... rest):void {
+			this.createLog(LogLevel.DEBUG, message, rest);
+		}
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Private methods
@@ -169,10 +176,10 @@ package org.flashapi.hummingbird.logging {
 			var msg:String = message;
 			var len:int = rest.length - 1;
 			var pattern:RegExp;
-			var addParam:Object;
+			var addParam:String;
 			for (; len >= 0; len--) {
-				pattern = new RegExp("{" + String(len) + "}");
-				addParam = rest[len];
+				pattern = new RegExp("\\{" + String(len) + "\\}", "gim");
+				addParam = String(rest[len]);
 				msg = msg.replace(pattern, addParam);
 			}
 			return msg;

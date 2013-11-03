@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.logging {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 27/10/2013 08:58
+	 *  @version 1.0.1, 03/11/2013 18:20
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -97,6 +97,12 @@ package org.flashapi.hummingbird.logging {
 		 * 	<code>LogLevel.WARN</code> level.
 		 */
 		public static const WARN_TAG:String = "[LogLevel.WARN]";
+		
+		/**
+		 * 	Specifies the string to be used as level tag for the 
+		 * 	<code>LogLevel.DEBUG</code> level.
+		 */
+		public static const DEBUG_TAG:String = "[LogLevel.DEBUG]";
 		
 		//--------------------------------------------------------------------------
 		//
@@ -241,6 +247,8 @@ package org.flashapi.hummingbird.logging {
 				levelTag = LogMessageComposer.INFO_TAG;
 			} else if(level == LogLevel.WARN) {
 				levelTag = LogMessageComposer.WARN_TAG;
+			} else if(level == LogLevel.DEBUG) {
+				levelTag = LogMessageComposer.DEBUG_TAG;
 			}
 			return levelTag;
 		}

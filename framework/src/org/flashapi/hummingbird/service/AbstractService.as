@@ -40,11 +40,11 @@ package org.flashapi.hummingbird.service {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 30/04/2013 18:22
+	 *  @version 1.0.1, 03/11/2013 17:12
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import flash.events.EventDispatcher;
+	import org.flashapi.hummingbird.core.LoggableObject;
 	
 	//--------------------------------------------------------------------------
 	//
@@ -55,7 +55,7 @@ package org.flashapi.hummingbird.service {
 	/**
 	 * 	Convenient superclass for services implementations.
 	 */
-	public class AbstractService extends EventDispatcher implements IService {
+	public class AbstractService extends LoggableObject implements IService {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -80,5 +80,37 @@ package org.flashapi.hummingbird.service {
 		 * 	@inheritDoc
 		 */
 		public function finalize():void { }
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Protected methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Sets the result of an operation to the specified responder when the call
+		 * 	to the service succeeds and returns a result.
+		 * 
+		 * 	@param responder	The <code>ServiceResponder</code> object for which
+		 * 						to pass the result information.
+		 * 	@param result 		The result object, as defined by the developper of 
+		 * 						the service.
+		 */
+		protected function operationResult(responder:ServiceResponder, result:Object):void {
+			responder.onResult(result);
+		}
+		
+		/**
+		 * 	Sets the fault inforation for an operation to the specified responder 
+		 * 	when the call to the service returns an error.
+		 * 
+		 * 	@param responder	The <code>ServiceResponder</code> object for which
+		 * 						to pass the fault information.
+		 * 	@param fault 		The fault object, as defined by the developper of 
+		 * 						the service.
+		 */
+		protected function operationFault(responder:ServiceResponder, fault:Object):void {
+			responder.onStatus(fault, this);
+		}
 	}
 }

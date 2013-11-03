@@ -32,56 +32,51 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.logging {
+package org.flashapi.hummingbird.core {
 	
 	// -----------------------------------------------------------
-	//  LogLevel.as
+	//  LoggableObject.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.1, 03/11/2013 18:17
+	 *  @version 1.0.0, 03/11/2013 17:09
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import flash.events.EventDispatcher;
+	import org.flashapi.hummingbird.logging.ILogger;
+	
 	/**
-	 *  The <code>LogLevel</code> class provides constant that can be used to control
-	 * 	logging output.
-	 *  
-	 * 	@see org.flashapi.hummingbird.logging.ILogger
-	 * 	@see org.flashapi.hummingbird.logging.LogEvent
+	 * 	Abstract class for object that provide an internal acces to the <code>ILogger</code>
+	 * 	singleton.
 	 */
-	public class LogLevel {
+	public class LoggableObject extends EventDispatcher {
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public constants
+		//  Constructor
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Defines a message level for static configuration messages.
+		 *  Constructor. 	Creates a new <code>LoggableObject</code> instance.
 		 */
-		public static const CONFIG :uint = 0;
+		public function LoggableObject() {
+			super();
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Protected methods
+		//
+		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Defines a message level indicating a serious failure.
+		 * 	Returns a convenient reference to the internal logger.
 		 */
-		public static const FATAL:uint = 1;
-		
-		/**
-		 * 	Defines a message level for informational messages.
-		 */
-		public static const INFO:uint = 2;
-		
-		/**
-		 * 	Defines a message level indicating a potential problem.
-		 */
-		public static const WARN:uint = 3;
-		
-		/**
-		 * 	Defines a helpful message for debugging an application.
-		 */
-		public static const DEBUG:uint = 4;
+		protected function getLogger():ILogger {
+			return HummingbirdBase.getLogger();
+		}
 	}
 }

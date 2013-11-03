@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.logging {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 06/10/2013 16:30
+	 *  @version 1.0.1, 03/11/2013 18:19
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -121,5 +121,21 @@ package org.flashapi.hummingbird.logging {
 		 * 	@see org.flashapi.hummingbird.logging.LogLevel
 		 */
 		function warn(message:String, ... rest):void;
+		
+		/**
+		 *  Logs the specified data using the <code>LogLevel.DEBUG</code> level.
+		 * 
+		 * 	@param message 	The information to log. This string can contain special
+		 * 					marker characters of the form {x}, where x is a zero
+		 * 					based index that will be replaced with the additional
+		 * 					parameters found at that index if specified.
+		 * 	@param rest		Additional parameters that can be subsituted in the
+		 * 					str parameter at each "{x}" location, where x is
+		 * 					an integer (zero based) index value into the
+		 * 					<code>Array</code> of values specified.
+		 * 
+		 * 	@see org.flashapi.hummingbird.logging.LogLevel
+		 */
+		function debug(message:String, ... rest):void;
 	}
 }

@@ -32,42 +32,25 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.core {
+package org.flashapi.hummingbird.service {
+	import org.flashapi.hummingbird.core.HummingbirdBase;
 	
 	// -----------------------------------------------------------
-	//  AbstractModelUpdater.as
+	//  ServiceResponder.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 05/07/2013 20:02
+	 *  @version 1.0.0, 03/11/2013 17:37
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import org.flashapi.hummingbird.events.DependencyEvent;
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Events
-	//
-	//--------------------------------------------------------------------------
-	
 	/**
-	 *  Dispatched when the dependency injection is complete on this <code>AbstractModelUpdater</code>
-	 * 	object.
-	 *
-	 *  @eventType org.flashapi.hummingbird.events.DependencyEvent.DEPENDENCY_COMPLETE
+	 * 	The <code>ServiceResponder</code> class provides an object that is used
+	 * 	in calls to service objects to handle return values related to the success
+	 * 	or failure of specific operations. 
 	 */
-	[Event(name="dependencyComplete", type="org.flashapi.hummingbird.events.DependencyEvent")]
-	
-	/**
-	 * 	Abstract class for <code>IController</code> and <code>IOrchestrator</code>
-	 * 	implementations.
-	 * 
-	 * 	@see org.flashapi.hummingbird.controller.IController
-	 * 	@see org.flashapi.hummingbird.orchestrator.IOrchestrator
-	 */
-	public class AbstractModelUpdater extends LoggableObject {
+	public class ServiceResponder {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -76,35 +59,75 @@ package org.flashapi.hummingbird.core {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>AbstractModelUpdater</code> instance.
+		 * 	Constructor. 	Creates a new <code>ServiceResponder</code> instance.
+		 * 
+		 * 	@param	result	The function invoked if the call to the service succeeds
+		 * 					and returns a result.
+		 * 	@param	status	The function invoked if the service returns an error.
 		 */
-		public function AbstractModelUpdater() {
+		public function ServiceResponder(result:Function, status:Function = null) {
 			super();
-			this.initObj();
+			this.initObj(result, status);
 		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public methods
+		//  Internal methods
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	@copy org.flashapi.hummingbird.core.IFinalizable#finalize()
+		 * 	@private
+		 * 
+		 * 	Method invoked from the <code>AbstractService</code> class when the call
+		 * 	to the service succeeds and returns a result.
+		 * 
+		 * 	@param result 	The result object, as defined by the developper of the
+		 * 					service.
 		 */
-		public function finalize():void { }
+		internal function onResult(result:Object):void {
+			_resultHandler(result);
+		}
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Method invoked from the <code>AbstractService</code> class when the call
+		 * 	to the service returns an error.
+		 * 
+		 * 	@param result 	The fault object, as defined by the developper of the
+		 * 					service.
+		 * 	@param service 	The reference to the service that handles this error.
+		 */
+		internal function onStatus(fault:Object, service:IService):void {
+			if (_statusHandler != null) {
+				_statusHandler(fault);
+			} else {
+				HummingbirdBase.getLogger()
+					.warn("No status function is defined for handling a service error on " + service);
+			}
+		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Protected methods
+		//  Private properties
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Called when the Dependency Injection process is completely performed on
-		 * 	this MVC object.
+		 * 	@private
+		 * 
+		 * 	The reference to the function invoked if the call to the service succeeds 
+		 * 	and returns a result.
 		 */
-		protected function onDependencyComplete():void { }
+		private var _resultHandler:Function;
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	The reference to the function invoked if the service returns an error.
+		 */
+		private var _statusHandler:Function;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -115,21 +138,15 @@ package org.flashapi.hummingbird.core {
 		/**
 		 * 	@private
 		 * 
-		 * 	Initializes this MVC object.
-		 */
-		private function initObj():void {
-			this.addEventListener(DependencyEvent.DEPENDENCY_COMPLETE, this.dependencyCompleteHandler);
-		}
-		
-		/**
-		 * 	@private
+		 * Initializes the object.
 		 * 
-		 * 	Event handler invoked when the Dependency Injection process is completely 
-		 * 	performed on this MVC object.
+		 * 	@param	result	The function invoked if the call to the service succeeds
+		 * 					and returns a result.
+		 * 	@param	status	The function invoked if the service returns an error.
 		 */
-		private function dependencyCompleteHandler(e:DependencyEvent):void {
-			this.removeEventListener(DependencyEvent.DEPENDENCY_COMPLETE, this.dependencyCompleteHandler);
-			this.onDependencyComplete();
+		private function initObj(result:Function, status:Function = null):void {
+			_resultHandler = result;
+			_statusHandler = status;
 		}
 	}
 }
