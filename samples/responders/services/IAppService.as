@@ -18,11 +18,6 @@ package services {
 	
 	public interface IAppService extends IService {
 		
-		/**
-		 * 	
-		 * 
-		 * 	@param The responder used to handle the response of the service.
-		 */
 		function getWelcomeMessage(responder:ServiceResponder, name:String):void;
 	}
 }

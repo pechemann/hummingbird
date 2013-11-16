@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/////////////////////////////////////////////////////////////////////////////////////
+//
+//    Simplified BSD License
+//    ======================
+//    
+//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    
+//    Redistribution and use in source and binary forms, with or without modification,
+//    are permitted provided that the following conditions are met:
+//    
+//    1. Redistributions of source code must retain the above copyright notice, this
+//       list of conditions and the following disclaimer. 
+//    
+//    2. Redistributions in binary form must reproduce the above copyright notice,
+//       this list of conditions and the following disclaimer in the documentation
+//       and/or other materials provided with the distribution. 
+//    
+//    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+//    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+//    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+//    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+//    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+//    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+//    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//    
+//    The views and conclusions contained in the software and documentation are those
+//    of the authors and should not be interpreted as representing official policies, 
+//    either expressed or implied, of the copyright holders.
+//    
+/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+//  HelloWorldView.mxml
+///////////////////////////////////////////////////////////////
+
+/**
+ *  @author Pascal ECHEMANN
+ *  @version 1.0.0, 15/11/2013 23:11
+ *  @see http://www.flashapi.org/
+ */
+
+The GUI for the Flex-based "Hello World" application.
+-->
+<s:VGroup
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	xmlns:display="ui.display.*"
+	implements="org.flashapi.hummingbird.view.IFlexView"
+	width="100%" height="100%"
+	horizontalAlign="center" gap="20"
+	creationComplete="this.creationCompleteHandler();">
+	
+	<!-- View states -->
+	<s:states>
+		<s:State name="default"/>
+		<s:State name="final"/>
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import controllers.IAppController;
+			import events.ModelEvent;
+			import flash.events.MouseEvent;
+			import models.IAppModel;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Dependencies injection
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * 	The model of the application.
+			 */
+			[Model(alias="AppModel")]
+			public var model:IAppModel;
+			
+			/**
+			 * 	The controller of the application.
+			 */
+			[Controller(alias="AppController")]
+			public var controller:IAppController;
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Public methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 *	@inheritDoc
+			 */
+			public function finalize():void { }
+			
+			//--------------------------------------------------------------------------
+			//
+			//  Private methods
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 *	Method invoked when the creation of the view is complete.
+			 */
+			private function creationCompleteHandler():void {
+				this.model.addEventListener(ModelEvent.MODEL_UPDATE, this.modelUpdateHandler);
+			}
+			
+			/**
+			 *	Method invoked each time the model changes.
+			 */
+			private function modelUpdateHandler(e:ModelEvent):void {
+				this.nameInput.text = "";
+				this.setState("final");
+				this.labelDisplay.text = this.model.getGreeter().sayHello();
+			}
+			
+			/**
+			 *	Method invoked each time the user clicks on the validation button.
+			 */
+			private function validateNameInputHandler(e:MouseEvent):void {
+				this.controller.setInputValue(this.nameInput.text);
+			}
+			
+			/**
+			 *	Method invoked each time the text input receives the focus.
+			 */
+			private function inputFocusInHandler(e:FocusEvent):void {
+				this.setState("default");
+			}
+			
+			/**
+			 * 	Changes the current view state.
+			 * 
+			 * 	@param	state	The new state value for this view.
+			 */
+			private function setState(state:String):void {
+				this.currentState = state;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Spacer height="20"/>
+	<!-- Title component -->
+	<display:Title/>
+	<s:Spacer height="20"/>
+	<!-- User inputs -->
+	<s:VGroup gap="10">
+		<s:HGroup
+			id="inputGroup"
+			verticalAlign="baseline">
+				<s:Label text="Write your name:"/>
+				<s:TextInput id="nameInput"
+					focusIn="this.inputFocusInHandler(event);" />
+				<s:Button
+					label="GO"
+					click="this.validateNameInputHandler(event);"/>
+		</s:HGroup>
+		<s:HGroup includeIn="final">
+			<s:Spacer width="90"/>
+			<s:Label id="labelDisplay" fontWeight="bold" />
+		</s:HGroup>
+		
+	</s:VGroup>
+	<!-- Logo component -->
+	<display:Logo/>
+</s:VGroup>
