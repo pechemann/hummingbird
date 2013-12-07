@@ -64,10 +64,7 @@ package hummingbird.testSuiteFX.cases {
 		
 		[BeforeClass]
 		public static function createContexts():void  {
-			HummingbirdFX.setApplicationContext(
-				HummingbirdTester.getBasicContext(),
-				HummingbirdTester.getApplication()
-			);
+			HummingbirdFX.setApplicationContext(HummingbirdTester.getBasicContext());
 		}
 		
 		[Test( 	order="1",

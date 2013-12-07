@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.factory {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.1.0, 24/11/2013 16:31
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -90,6 +90,13 @@ package org.flashapi.hummingbird.factory {
 			var view:IView = new ClassRef();
 			_iocRef.getInstance().doLookup(view);
 			return view;
+		}
+		
+		/**
+		 * 	@inheritDoc
+		 */
+		public function doLookup(obj:Object):void {
+			_iocRef.getInstance().doLookup(obj);
 		}
 		
 		//--------------------------------------------------------------------------

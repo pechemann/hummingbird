@@ -32,19 +32,22 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.service {
+package org.flashapi.hummingbird.view {
 	
 	// -----------------------------------------------------------
-	//  AbstractService.as
+	//  AbstractMobileView.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.1, 03/11/2013 17:12
+	 *  @version 1.0.0, 24/11/2013 14:54
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import org.flashapi.hummingbird.core.LoggableObject;
+	import mx.core.FlexGlobals;
+	import org.flashapi.hummingbird.events.DependencyEvent;
+	import spark.components.Application;
+	import spark.components.View;
 	
 	//--------------------------------------------------------------------------
 	//
@@ -53,9 +56,18 @@ package org.flashapi.hummingbird.service {
 	//--------------------------------------------------------------------------
 	
 	/**
-	 * 	Convenient superclass for services implementations.
+	 *  Dispatched when the dependency injection is complete on this <code>IFlexMobileView</code>
+	 * 	object.
+	 *
+	 *  @eventType org.flashapi.hummingbird.events.DependencyEvent.DEPENDENCY_COMPLETE
 	 */
-	public class AbstractService extends LoggableObject implements IService {
+	[Event(name="dependencyComplete", type="org.flashapi.hummingbird.events.DependencyEvent")]
+	
+	/**
+	 * 	Convenient superclass for view implementations based on the <code>View</code>
+	 * 	class, using the Template Method design pattern.
+	 */
+	public class AbstractMobileView extends View implements IFlexMobileView {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -64,10 +76,24 @@ package org.flashapi.hummingbird.service {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>AbstractService</code> instance.
+		 *  Constructor. 	Creates a new <code>AbstractMobileView</code> instance.
 		 */
-		public function AbstractService() {
+		public function AbstractMobileView() {
 			super();
+			this.initObj();
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Getter / setter properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Returns a reference to the main <code>Application</code> instance.
+		 */
+		public function get application():Application {
+			return Application(FlexGlobals.topLevelApplication);
 		}
 		
 		//--------------------------------------------------------------------------
@@ -88,29 +114,35 @@ package org.flashapi.hummingbird.service {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Sets the result of an operation to the specified responder when the call
-		 * 	to the service succeeds and returns a result.
-		 * 
-		 * 	@param responder	The <code>ServiceResponder</code> object for which
-		 * 						to pass the result information.
-		 * 	@param result 		The result object, as defined by the developper of 
-		 * 						the service.
+		 * 	Called when the Dependency Injection process is completely performed on
+		 * 	this MVC object.
 		 */
-		protected function operationResult(responder:ServiceResponder, result:Object):void {
-			responder.onResult(result);
+		protected function onDependencyComplete():void { }
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Initializes this MVC object.
+		 */
+		private function initObj():void {
+			this.addEventListener(DependencyEvent.DEPENDENCY_COMPLETE, this.dependencyCompleteHandler);
 		}
 		
 		/**
-		 * 	Sets the fault information for an operation to the specified responder 
-		 * 	when the call to the service returns an error.
+		 * 	@private
 		 * 
-		 * 	@param responder	The <code>ServiceResponder</code> object for which
-		 * 						to pass the fault information.
-		 * 	@param fault 		The fault object, as defined by the developper of 
-		 * 						the service.
+		 * 	Event handler invoked when the Dependency Injection process is completely 
+		 * 	performed on this MVC object.
 		 */
-		protected function operationFault(responder:ServiceResponder, fault:Object):void {
-			responder.onStatus(fault, this);
+		private function dependencyCompleteHandler(e:DependencyEvent):void {
+			this.removeEventListener(DependencyEvent.DEPENDENCY_COMPLETE, this.dependencyCompleteHandler);
+			this.onDependencyComplete();
 		}
 	}
 }

@@ -30,21 +30,31 @@ package services.impl {
 		
 		public function getWelcomeMessage(responder:ServiceResponder, name:String):void {
 			_responder = responder;
-			var request:URLRequest = new URLRequest(PhpService.DEST_URL);
-			request.method = URLRequestMethod.GET; 
-			var variables:URLVariables = new URLVariables(); 
-			variables.name = name;            
-			request.data = variables; 
-			var loader:URLLoader = new URLLoader();
-			loader.addEventListener(Event.COMPLETE, this.httpRequestComplete);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, this.httpRequestError); 
-			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, this.httpRequestError); 
+			var request:URLRequest = this.getUrlRequest(name);
+			var loader:URLLoader = this.createUrlLoader();
 			loader.load(request);
 		}
 		
 		private var _responder:ServiceResponder;
 		
 		private static const DEST_URL:String = "http://localhost/responders/hello_world.php";
+		
+		private function getUrlRequest(name:String):URLRequest {
+			var request:URLRequest = new URLRequest(PhpService.DEST_URL);
+			request.method = URLRequestMethod.GET; 
+			var variables:URLVariables = new URLVariables(); 
+			variables.name = name;            
+			request.data = variables; 
+			return request;
+		}
+		
+		private function createUrlLoader():URLLoader {
+			var loader:URLLoader = new URLLoader();
+			loader.addEventListener(Event.COMPLETE, this.httpRequestComplete);
+			loader.addEventListener(IOErrorEvent.IO_ERROR, this.httpRequestError); 
+			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, this.httpRequestError);
+			return loader;
+		}
 		
 		private function httpRequestComplete(e:Event):void {
 			var loader:URLLoader = URLLoader(e.target);

@@ -51,7 +51,7 @@ The Main.mxml class represents the entry point of the AutoComplete application.
 	xmlns:s="library://ns.adobe.com/flex/spark"
 	xmlns:display="ui.display.*"
 	xmlns:context="application.*"
-	creationComplete="HummingbirdFX.setApplicationContext(this.appContext, this);">
+	creationComplete="HummingbirdFX.setApplicationContext(this.appContext);">
 	
 	<!-- Hummingbird Framework declaration: -->
 	<fx:Declarations>

@@ -73,7 +73,7 @@ The Main.mxml class represents the entry point of the TodoList application.
 			 */
 			private function creationCompleteHandler(e:FlexEvent):void {
 				LogManager.init(mx_internal::VERSION);
-				HummingbirdFX.setApplicationContext(this.appContext, this);
+				HummingbirdFX.setApplicationContext(this.appContext);
 			}
 		]]>
 		</fx:Script>

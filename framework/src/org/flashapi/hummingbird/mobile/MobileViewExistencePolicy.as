@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /////////////////////////////////////////////////////////////////////////////////////
 //
 //    Simplified BSD License
@@ -34,54 +32,47 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////
-//  Main.mxml
-///////////////////////////////////////////////////////////////
+package org.flashapi.hummingbird.mobile {
+	
+	// -----------------------------------------------------------
+	//  MobileViewExistencePolicy.as
+	// -----------------------------------------------------------
 
-/**
- *  @author Pascal ECHEMANN
- *  @version 1.0.0, 02/11/2013 14:32
- *  @see http://www.flashapi.org/
- */
-
-The Main.mxml class represents the entry point of the AutoComplete application.
--->
-<s:Application
-	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:display="ui.display.*"
-	xmlns:context="application.*"
-	creationComplete="HummingbirdFX.setApplicationContext(this.appContext);">
+	/**
+	 *  @author Pascal ECHEMANN
+	 *  @version 1.0.0, 29/11/2013 20:00
+	 *  @see http://www.flashapi.org/
+	 */
 	
-	<!-- Hummingbird Framework declaration: -->
-	<fx:Declarations>
-		<context:AppContext id="appContext"/>
-	</fx:Declarations>
-	
-	<!-- Hummingbird Framework import: -->
-	<fx:Script>
-		<![CDATA[ import org.flashapi.hummingbird.HummingbirdFX; ]]>
-	</fx:Script>
-	
-	<!-- Stype declaration: -->
-	<fx:Style>
-		@namespace s "library://ns.adobe.com/flex/spark";
-		@font-face {
-			src:url("./ui/assets/MyriadPro-Regular.otf");
-			font-family:VerdanaEmbeded;
-			embedAsCFF:true;
-		}
-		@font-face {
-			src:url("./ui/assets/MyriadPro-Bold.otf");
-			font-family:VerdanaEmbeded;
-			embedAsCFF:true;
-			fontWeight:bold;
-		}
-		s|RichText {
-			font-family:VerdanaEmbeded;
-		}
-	</fx:Style>
-	
-	<!-- Application background: -->
-	<display:Background/>
-</s:Application>
+	/**
+	 *  The <code>MobileViewExistencePolicy</code> class is an enumeration of constant 
+	 * 	values that specify the the value of the <code>IMobileMediator.mobileViewExistencePolicy</code>
+	 * 	property.
+	 * 
+	 * 	@see org.flashapi.hummingbird.mobile.IMobileMediator#mobileViewExistencePolicy
+	 * 
+	 * 	@since Hummingbird 1.6
+	 */
+	public class MobileViewExistencePolicy {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public constants
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Indicates that the <code>finalize()</code> method must be called on
+		 * 	<code>IFlexMobileView</code> objects when they are removed from the
+		 * 	application.
+		 */
+		public static const DISPOSE_ON_REMOVE:String = "disposeOnRemove";
+		
+		/**
+		 * 	Indicates that the <code>finalize()</code> method is not called on
+		 * 	<code>IFlexMobileView</code> objects when they are removed from the
+		 * 	application.
+		 */
+		public static const DO_NOTHING_ON_REMOVE:String = "doNothingOnRemove";
+	}
+}

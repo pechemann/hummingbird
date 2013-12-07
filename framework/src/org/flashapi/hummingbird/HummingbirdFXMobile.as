@@ -35,15 +35,16 @@
 package org.flashapi.hummingbird {
 	
 	// -----------------------------------------------------------
-	//  HummingbirdFX.as
+	//  HummingbirdFXMobile.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 26/11/2013 18:38
+	 *  @version 1.0.0, 24/11/2013 12:42
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import mx.core.FlexGlobals;
 	import org.flashapi.hummingbird.core.HummingbirdBase;
 	import org.flashapi.hummingbird.core.HummingbirdEventDispatcher;
 	import org.flashapi.hummingbird.core.HummingbirdVersion;
@@ -51,23 +52,43 @@ package org.flashapi.hummingbird {
 	import org.flashapi.hummingbird.factory.IDefinitionRegistry;
 	import org.flashapi.hummingbird.factory.IFactory;
 	import org.flashapi.hummingbird.logging.ILogger;
-	import org.flashapi.hummingbird.view.IFlexView;
-	import org.flashapi.hummingbird.view.IView;
+	import org.flashapi.hummingbird.mobile.IMobileMediator;
 	import spark.components.Application;
-	import mx.core.FlexGlobals;
-	import mx.core.IVisualElement;
 	
 	/**
-	 * 	The <code>HummingbirdFX</code> class represents the core of the Hummingbird
-	 * 	framework for Flex development.
+	 * 	The <code>HummingbirdFXMobile</code> class represents the core of the Hummingbird
+	 * 	framework for development of mobile applications with the Flex framework.
 	 */
-	public class HummingbirdFX extends HummingbirdBase {
+	public class HummingbirdFXMobile extends HummingbirdBase {
 		
 		//--------------------------------------------------------------------------
 		//
 		//  Public methods
 		//
 		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Returns the mediator object for the current Flex Mobile Application.
+		 * 	
+		 * @return	A <code>IMobileMediator</code> instance.
+		 */
+		public static function getMediator():Object {
+			return _mediator;
+		}
+		
+		/**
+		 * 	Defines the mediator object for the current Flex Mobile Application.
+		 * 
+		 * 	@param mediator The mediator object used to work with the current
+		 * 					Flex Mobile Application.
+		 * 	
+		 * 	@return	A reference to the <code>HummingbirdFXMobile</code> class that
+		 * 			can be used for chaining methods.
+		 */
+		public static function setMediator(mediator:IMobileMediator):Class {
+			_mediator = mediator;
+			return HummingbirdFXMobile;
+		}
 		
 		/**
 		 * 	Returns the reference to the Hummingbird framework internal logger.
@@ -83,9 +104,16 @@ package org.flashapi.hummingbird {
 		 * 
 		 * 	@param	applicationContext	The applicationcontext to add to the
 		 * 								Hummingbird IoC container.
+		 * 	@param	application			A reference to the Flex <code>Application</code>
+		 * 								instance.
+		 * 
+		 * 	
+		 * 	@return	A reference to the <code>HummingbirdFXMobile</code> class that
+		 * 			can be used for chaining methods.
 		 */
-		public static function setApplicationContext(applicationContext:IApplicationContext):void {
+		public static function setApplicationContext(applicationContext:IApplicationContext):Class {
 			HummingbirdBase.setApplicationContext(applicationContext);
+			return HummingbirdFXMobile;
 		}
 		
 		/**
@@ -105,60 +133,12 @@ package org.flashapi.hummingbird {
 		}
 		
 		/**
-		 * 	Adds the specified view to the scene.
-		 * 
-		 * 	@param	view	The view to add to the scene.
-		 */
-		public static function addToScene(view:IView):void {
-			HummingbirdFX.getApplication().addElement(IFlexView(view));
-		}
-		
-		/**
-		 * 	Removes the specified view from the scene.
-		 * 
-		 * 	@param	view	The view to remove from the scene.
-		 * 
-		 * 	@see #clearScene()
-		 */
-		public static function removeFromScene(view:IView):void {
-			HummingbirdFX.getApplication().removeElement(IFlexView(view));
-		}
-		
-		/**
-		 * 	Returns a boolean value that indicates whether the specified view is
-		 * 	added to the scene (<code>true</code>), or not (<code>false</code>).
-		 * 
-		 * 	@param	view	The view to test.
-		 * 
-		 * 	@return <code>true</code> whether the specified view is added to the
-		 * 			scene; <code>false</code> otherwise.
-		 */
-		public static function sceneContains(view:IView):Boolean {
-			return Boolean(IVisualElement(view).owner == HummingbirdFX.getApplication());
-		}
-		
-		/**
-		 * 	Removes all the views added to the scene.
-		 * 
-		 * 	@see #removeFromScene()
-		 */
-		public static function clearScene():void {
-			var app:Application = HummingbirdFX.getApplication();
-			while (app.numElements > 0) {
-				app.removeElementAt(0);
-			}
-		}
-		
-		/**
 		 * 	Returns a reference to the <code>Application</code> instance.
 		 * 	
 		 * 	@return The <code>Application</code> instance.
 		 */
 		public static function getApplication():Application {
-			if (HummingbirdFX._application == null) {
-				HummingbirdFX._application = Application(FlexGlobals.topLevelApplication);
-			}
-			return HummingbirdFX._application;
+			return Application(FlexGlobals.topLevelApplication);
 		}
 		
 		/**
@@ -210,8 +190,9 @@ package org.flashapi.hummingbird {
 		/**
 		 * 	@private
 		 * 
-		 * 	The reference to the Flex <code>Application</code> instance.
+		 * 	The reference to the mediator object for the current Flex Mobile
+		 * 	Application.
 		 */
-		private static var _application:Application;
+		private static var _mediator:IMobileMediator;
 	}
 }

@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.factory {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.1.0, 24/11/2013 16:32
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -65,7 +65,6 @@ package org.flashapi.hummingbird.factory {
 		//
 		//--------------------------------------------------------------------------
 		
-		//--> TODO : add a Singleton creation process to this method.
 		/**
 		 * 	Returns an instance of type <code>IView</code> built from the specified
 		 * 	class type reference.
@@ -80,5 +79,19 @@ package org.flashapi.hummingbird.factory {
 		 * 			view object contains invalid Metadata.
 		 */
 		function createView(ClassRef:Class):IView;
+		
+		/**
+		 * 	Performs the lookup method injection on the specified singleton object.
+		 * 
+		 * 	@param	obj The singleton object on which to perform the lookup method
+		 * 				injection.
+		 * 
+		 * 	@throws org.flashapi.hummingbird.exceptions.MetadataException
+		 * 			Throws a <code>MetadataException</code> exception if the specified
+		 * 			singleton object contains invalid Metadata.
+		 * 
+		 * 	@since Hummingbird 1.6
+		 */
+		function doLookup(obj:Object):void;
 	}
 }

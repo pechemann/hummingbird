@@ -3,7 +3,7 @@
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
 	xmlns:s="library://ns.adobe.com/flex/spark"
 	xmlns:context="application.*"
-	creationComplete="HummingbirdFX.setApplicationContext(this.appContext, this);">
+	creationComplete="HummingbirdFX.setApplicationContext(this.appContext);">
 	
 	<fx:Declarations>
 		<context:LazyEvalContext id="appContext"/>

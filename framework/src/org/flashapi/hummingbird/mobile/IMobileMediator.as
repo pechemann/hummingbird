@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /////////////////////////////////////////////////////////////////////////////////////
 //
 //    Simplified BSD License
@@ -34,54 +32,37 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////
-//  Main.mxml
-///////////////////////////////////////////////////////////////
+package org.flashapi.hummingbird.mobile {
+	
+	// -----------------------------------------------------------
+	//  IMobileMediator.as
+	// -----------------------------------------------------------
 
-/**
- *  @author Pascal ECHEMANN
- *  @version 1.0.0, 02/11/2013 14:32
- *  @see http://www.flashapi.org/
- */
-
-The Main.mxml class represents the entry point of the AutoComplete application.
--->
-<s:Application
-	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:display="ui.display.*"
-	xmlns:context="application.*"
-	creationComplete="HummingbirdFX.setApplicationContext(this.appContext);">
+	/**
+	 *  @author Pascal ECHEMANN
+	 *  @version 1.0.0, 24/11/2013 16:32
+	 *  @see http://www.flashapi.org/
+	 */
 	
-	<!-- Hummingbird Framework declaration: -->
-	<fx:Declarations>
-		<context:AppContext id="appContext"/>
-	</fx:Declarations>
-	
-	<!-- Hummingbird Framework import: -->
-	<fx:Script>
-		<![CDATA[ import org.flashapi.hummingbird.HummingbirdFX; ]]>
-	</fx:Script>
-	
-	<!-- Stype declaration: -->
-	<fx:Style>
-		@namespace s "library://ns.adobe.com/flex/spark";
-		@font-face {
-			src:url("./ui/assets/MyriadPro-Regular.otf");
-			font-family:VerdanaEmbeded;
-			embedAsCFF:true;
-		}
-		@font-face {
-			src:url("./ui/assets/MyriadPro-Bold.otf");
-			font-family:VerdanaEmbeded;
-			embedAsCFF:true;
-			fontWeight:bold;
-		}
-		s|RichText {
-			font-family:VerdanaEmbeded;
-		}
-	</fx:Style>
-	
-	<!-- Application background: -->
-	<display:Background/>
-</s:Application>
+	/**
+	 * 	<code>IMobileMediator</code> is the markup interface for objects that encapsulate
+	 * 	how a Flex Mobile application and the Hummingbird Framework interact.
+	 * 
+	 * 	@since Hummingbird 1.6
+	 */
+	public interface IMobileMediator {
+		
+		/**
+		 * 	Determines how this mediator decides whether to call the <code>finalize()</code>
+		 * 	method on a <code>IFlexView</code> object when it is removed from the
+		 * 	scene (<code>MobileViewExistencePolicy.DISPOSE_ON_REMOVE</code>), or not
+		 * 	(<code>MobileViewExistencePolicy.DO_NOTHING_ON_REMOVE</code>).
+		 * 
+		 * 	@default MobileViewExistencePolicy.DISPOSE_ON_REMOVE
+		 * 
+		 * 	@see org.flashapi.hummingbird.mobile.MobileViewExistencePolicy
+		 */
+		function get mobileViewExistencePolicy():String;
+		function set mobileViewExistencePolicy(value:String):void;
+	}
+}

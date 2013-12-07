@@ -68,7 +68,7 @@ package hummingbird.testSuiteFX.cases {
 		public function HummingbirdFX_setApplicationContext_Test():void  {
 			var ioc:IHummingbirdContainer = HummingbirdContainer.getInstance();
 			var context:IApplicationContext = HummingbirdTester.getBasicContext();
-			HummingbirdFX.setApplicationContext(context, HummingbirdTester.getApplication());
+			HummingbirdFX.setApplicationContext(context);
 			Assert.assertTrue(ioc.hasMVCObject("BasicModel"));
 			ioc.clearApplicationContext(context);
 		}

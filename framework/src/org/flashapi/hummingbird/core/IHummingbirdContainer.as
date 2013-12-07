@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 20/10/2013 16:41
+	 *  @version 1.2.0, 24/11/2013 16:32
 	 *  @see http://www.flashapi.org/
 	 */
 	

@@ -83,9 +83,7 @@ package hummingbird.testSuiteFX.cases {
 				description="This tests the HummingbirdFX.getApplication() method" )]
 		public function HummingbirdFX_getApplication_Test():void  {
 			var context:IApplicationContext = HummingbirdTester.getBasicContext();
-			HummingbirdFX.setApplicationContext(context, HummingbirdTester.getApplication());
 			Assert.assertNotNull(HummingbirdFX.getApplication());
-			HummingbirdFX.clearApplicationContext(context);
 		}
 		
 		[Test( 	order="5",
