@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -44,7 +44,6 @@ package org.flashapi.hummingbird.enum {
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import org.flashapi.hummingbird.utils.constants.InterfaceReference;
 	import org.flashapi.hummingbird.utils.constants.MetadataConstant;
 	import org.flashapi.hummingbird.utils.MetadataReference;
 	
@@ -65,28 +64,28 @@ package org.flashapi.hummingbird.enum {
 		 * 	Represents the <code>Service</code> metadata reference.
 		 */
 		public static const SERVICE:MetadataReference = new MetadataReference(
-			MetadataConstant.SERVICE, InterfaceReference.SERVICE
+			MetadataConstant.SERVICE, InterfaceReferenceEnum.SERVICE.getInterfacePackage()
 		);
 		
 		/**
 		 * 	Represents the <code>Model</code> metadata reference.
 		 */
 		public static const MODEL:MetadataReference = new MetadataReference(
-			MetadataConstant.MODEL, InterfaceReference.MODEL
+			MetadataConstant.MODEL, InterfaceReferenceEnum.MODEL.getInterfacePackage()
 		);
 		
 		/**
 		 * 	Represents the <code>Controller</code> metadata reference.
 		 */
 		public static const CONTROLLER:MetadataReference = new MetadataReference(
-			MetadataConstant.CONTROLLER, InterfaceReference.CONTROLLER
+			MetadataConstant.CONTROLLER, InterfaceReferenceEnum.CONTROLLER.getInterfacePackage()
 		);
 		
 		/**
 		 * 	Represents the <code>Orchestrator</code> metadata reference.
 		 */
 		public static const ORCHESTRATOR:MetadataReference = new MetadataReference(
-			MetadataConstant.ORCHESTRATOR, InterfaceReference.ORCHESTRATOR
+			MetadataConstant.ORCHESTRATOR, InterfaceReferenceEnum.ORCHESTRATOR.getInterfacePackage()
 		);
 	}
 }

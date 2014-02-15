@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -40,16 +40,13 @@ package org.flashapi.hummingbird.mobile {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 24/11/2013 12:42
+	 *  @version 1.0.1, 05/01/2014 18:01
 	 *  @see http://www.flashapi.org/
 	 */
 	
 	import mx.core.FlexGlobals;
-	import mx.core.IVisualElement;
 	import mx.events.FlexEvent;
-	import org.flashapi.hummingbird.core.HummingbirdContainer;
 	import org.flashapi.hummingbird.exceptions.InvalidApplicationTypeException;
-	import org.flashapi.hummingbird.view.IFlexMobileView;
 	import spark.components.ViewNavigator;
 	import spark.components.ViewNavigatorApplication;
 	import spark.events.ElementExistenceEvent;
@@ -61,12 +58,12 @@ package org.flashapi.hummingbird.mobile {
 	 * 
 	 * 	@throws org.flashapi.hummingbird.exceptions.InvalidApplicationTypeException
 	 * 			Throws a <code>InvalidApplicationTypeException</code> exception if 
-	 * 			the top-level application is nt an instance of the
+	 * 			the top-level application is not an instance of the
 	 * 			<code>ViewNavigatorApplication</code> class.
 	 * 
 	 * 	@since Hummingbird 1.6
 	 */
-	public class ViewNavigatorMediator implements IMobileMediator {
+	public class ViewNavigatorMediator extends AbstractMobileMediator {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -96,16 +93,6 @@ package org.flashapi.hummingbird.mobile {
 			return _viewNavigator;
 		}
 		
-		/**
-		 * 	@inheritDoc
-		 */
-		public function get mobileViewExistencePolicy():String {
-			return _mobileViewExistencePolicy;
-		}
-		public function set mobileViewExistencePolicy(value:String):void {
-			_mobileViewExistencePolicy = value;
-		}
-		
 		//--------------------------------------------------------------------------
 		//
 		//  Private properties
@@ -126,15 +113,6 @@ package org.flashapi.hummingbird.mobile {
 		 */
 		private var _viewNavigator:ViewNavigator;
 		
-		/**
-		 * 	@private
-		 * 
-		 * 	Determines how this mediator decides whether to call the <code>finalize()</code>
-		 * 	method on a <code>IFlexView</code> object when it is removed from the
-		 * 	scene.
-		 */
-		private var _mobileViewExistencePolicy:String = MobileViewExistencePolicy.DISPOSE_ON_REMOVE;
-		
 		//--------------------------------------------------------------------------
 		//
 		//  Private methods
@@ -148,7 +126,7 @@ package org.flashapi.hummingbird.mobile {
 		 * 
 		 * 	@throws org.flashapi.hummingbird.exceptions.InvalidApplicationTypeException
 		 * 			Throws a <code>InvalidApplicationTypeException</code> exception if 
-		 * 			the top-level application is nt an instance of the
+		 * 			the top-level application is not an instance of the
 		 * 			<code>ViewNavigatorApplication</code> class.
 		 */
 		private function initObj():void {
@@ -173,32 +151,6 @@ package org.flashapi.hummingbird.mobile {
 			_viewNavigator =  _viewNavigatorApplication.navigator;
 			_viewNavigatorApplication.navigator.addEventListener(ElementExistenceEvent.ELEMENT_ADD, this.elementAddHandler);
 			_viewNavigatorApplication.navigator.addEventListener(ElementExistenceEvent.ELEMENT_REMOVE, this.elementRemoveHandler);
-		}
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	Event handler invoked each time a new view is added to the navigator
-		 * 	object display list.
-		 */
-		private function elementAddHandler(e:ElementExistenceEvent):void {
-			var elm:IVisualElement = e.element;
-			if(elm is IFlexMobileView) {
-				HummingbirdContainer.getInstance().doLookup(e.element);
-			}
-		}
-		
-		/**
-		 * 	@private
-		 * 
-		 * 	Event handler invoked each time a new view is removed from the navigator
-		 * 	object display list.
-		 */
-		private function elementRemoveHandler(e:ElementExistenceEvent):void {
-			var elm:IVisualElement = e.element;
-			if(elm is IFlexMobileView && _mobileViewExistencePolicy == MobileViewExistencePolicy.DISPOSE_ON_REMOVE) {
-				IFlexMobileView(elm).finalize();
-			}
 		}
 	}
 }

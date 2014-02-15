@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -46,11 +46,11 @@ package org.flashapi.hummingbird.factory {
 	
 	import org.flashapi.hummingbird.controller.IController;
 	import org.flashapi.hummingbird.core.IMVCObject;
+	import org.flashapi.hummingbird.enum.InterfaceReferenceEnum;
 	import org.flashapi.hummingbird.exceptions.InvalidTypeException;
 	import org.flashapi.hummingbird.model.IModel;
 	import org.flashapi.hummingbird.orchestrator.IOrchestrator;
 	import org.flashapi.hummingbird.service.IService;
-	import org.flashapi.hummingbird.utils.constants.InterfaceReference;
 	
 	/**
 	 * 	Default implementation of the <code>IDefinitionRegistry</code> interface:
@@ -93,7 +93,7 @@ package org.flashapi.hummingbird.factory {
 		 */
 		public function getModel(alias:String):IModel {
 			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
-			this.checkType(alias, obj, IModel, InterfaceReference.MODEL);
+			this.checkType(alias, obj, IModel, InterfaceReferenceEnum.MODEL.getInterfacePackage());
 			return obj as IModel;
 		}
 		
@@ -102,7 +102,7 @@ package org.flashapi.hummingbird.factory {
 		 */
 		public function getController(alias:String):IController {
 			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
-			this.checkType(alias, obj, IController, InterfaceReference.CONTROLLER);
+			this.checkType(alias, obj, IController, InterfaceReferenceEnum.CONTROLLER.getInterfacePackage());
 			return obj as IController;
 		}
 		
@@ -111,7 +111,7 @@ package org.flashapi.hummingbird.factory {
 		 */
 		public function getService(alias:String):IService {
 			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
-			this.checkType(alias, obj, IService, InterfaceReference.SERVICE);
+			this.checkType(alias, obj, IService, InterfaceReferenceEnum.SERVICE.getInterfacePackage());
 			return obj as IService;
 		}
 		
@@ -120,7 +120,7 @@ package org.flashapi.hummingbird.factory {
 		 */
 		public function getOrchestrator(alias:String):IOrchestrator {
 			var obj:IMVCObject = _iocRef.getInstance().getMVCObject(alias);
-			this.checkType(alias, obj, IOrchestrator, InterfaceReference.CONTROLLER);
+			this.checkType(alias, obj, IOrchestrator, InterfaceReferenceEnum.CONTROLLER.getInterfacePackage());
 			return obj as IOrchestrator;
 		}
 		

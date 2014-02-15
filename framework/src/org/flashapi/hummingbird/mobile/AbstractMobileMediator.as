@@ -32,45 +32,99 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package hummingbird.project.services.impl.invalidInjections {
+package org.flashapi.hummingbird.mobile {
+	import mx.core.IVisualElement;
+	import org.flashapi.hummingbird.core.HummingbirdContainer;
+	import org.flashapi.hummingbird.view.IFlexMobileView;
+	import spark.events.ElementExistenceEvent;
 	
 	// -----------------------------------------------------------
-	//  ControllerInService.as
+	//  AbstractMobileMediator.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/10/2013 11:17
+	 *  @version 1.0.0, 05/01/2014 17:59
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import hummingbird.project.controllers.BasicController;
-	import hummingbird.project.services.IBasicService;
-	import org.flashapi.hummingbird.controller.IController;
-	import org.flashapi.hummingbird.service.AbstractService;
-	
 	/**
-	 * 	A service for testing the invalid injection of a controller.
+	 * 	The <code>AbstractMobileMediator</code> class provides the internal process
+	 * 	used by the Hummingbird framework for interacting with a Flex Mobile
+	 * 	application built with the <code>ViewNavigatorApplication</code> class.
+	 * 
+	 * 	@since Hummingbird 1.7
 	 */
-	[Qualifier(alias="ControllerInService")]
-	public class ControllerInService extends AbstractService implements IBasicService {
+	public class AbstractMobileMediator implements IMobileMediator {
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Dependencies declaration
+		//  Constructor
 		//
 		//--------------------------------------------------------------------------
 		
-		[RegisterClass(type="hummingbird.project.controllers.ControllerInController")]
-		public var BasicControllerRef:Class = BasicController;
+		/**
+		 *  Constructor. 	Creates a new <code>AbstractMobileMediator</code> instance.
+		 */
+		public function AbstractMobileMediator() {
+			super();
+		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Dependencies injection
+		//  Getter / setter properties
 		//
 		//--------------------------------------------------------------------------
 		
-		[Controller(alias="BasicController")]
-		public var controller:IController;
+		/**
+		 * 	@inheritDoc
+		 */
+		public function get mobileViewExistencePolicy():String {
+			return $mobileViewExistencePolicy;
+		}
+		public function set mobileViewExistencePolicy(value:String):void {
+			$mobileViewExistencePolicy = value;
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Protected properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Determines how this mediator decides whether to call the <code>finalize()</code>
+		 * 	method on a <code>IFlexView</code> object when it is removed from the
+		 * 	scene.
+		 */
+		protected var $mobileViewExistencePolicy:String = MobileViewExistencePolicy.DISPOSE_ON_REMOVE;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Protected properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Event handler invoked each time a new view is added to the navigator
+		 * 	object display list.
+		 */
+		protected function elementAddHandler(e:ElementExistenceEvent):void {
+			var elm:IVisualElement = e.element;
+			if(elm is IFlexMobileView) {
+				HummingbirdContainer.getInstance().doLookup(e.element);
+			}
+		}
+		
+		/**
+		 * 	Event handler invoked each time a new view is removed from the navigator
+		 * 	object display list.
+		 */
+		protected function elementRemoveHandler(e:ElementExistenceEvent):void {
+			var elm:IVisualElement = e.element;
+			if(elm is IFlexMobileView && $mobileViewExistencePolicy == MobileViewExistencePolicy.DISPOSE_ON_REMOVE) {
+				IFlexMobileView(elm).finalize();
+			}
+		}
 	}
 }

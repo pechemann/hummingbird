@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -44,11 +44,23 @@ package hummingbird.project.models {
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import hummingbird.project.services.IBasicService;
 	import org.flashapi.hummingbird.model.AbstractModel;
 	
 	/**
 	 * 	A basic model for all valid testing cases.
 	 */
 	[Qualifier(alias="BasicModel")]
-	public class BasicModel extends AbstractModel implements IBasicModel {}
+	public class BasicModel extends AbstractModel implements IBasicModel {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Dependencies injection
+		//
+		//--------------------------------------------------------------------------
+		
+		[Service(alias="BasicService")]
+		public var service:IBasicService;
+		
+	}
 }

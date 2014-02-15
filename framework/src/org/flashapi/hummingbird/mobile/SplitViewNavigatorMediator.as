@@ -32,26 +32,38 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.utils {
+package org.flashapi.hummingbird.mobile {
 	
 	// -----------------------------------------------------------
-	//  ManifestReference.as
+	//  SplitViewNavigatorMediator.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 05/07/2013 22:24
+	 *  @version 1.0.0, 05/01/2014 17:38
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import mx.core.FlexGlobals;
+	import org.flashapi.hummingbird.exceptions.InvalidApplicationTypeException;
+	import spark.components.Application;
+	import spark.components.SplitViewNavigator;
+	import spark.components.supportClasses.ViewNavigatorBase;
+	import spark.events.ElementExistenceEvent;
+	
 	/**
-	 *  <code>ManifestReference</code> objects are used by the <code>ManifestReferenceEnum</code>
-	 * 	class to associate a property of the <code>ManifestInfo</code> class to the
-	 * 	corresponding value in the Hummingbird <code>MANIFEST.MF</code> file.
+	 * 	The <code>SplitViewNavigatorMediator</code> class provides the internal 
+	 * 	process used by the Hummingbird framework for interacting with a Flex Mobile
+	 * 	application built with the <code>SplitViewNavigator</code> class.
 	 * 
-	 * 	@see org.flashapi.hummingbird.enum.ManifestReferenceEnum
+	 * 	@throws org.flashapi.hummingbird.exceptions.InvalidApplicationTypeException
+	 * 			Throws a <code>InvalidApplicationTypeException</code> exception if 
+	 * 			the top-level application is not an instance of the
+	 * 			<code>spark.components.Application</code> class.
+	 * 
+	 * 	@since Hummingbird 1.7
 	 */
-	public class ManifestReference {
+	public class SplitViewNavigatorMediator extends AbstractMobileMediator {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -60,67 +72,42 @@ package org.flashapi.hummingbird.utils {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>ManifestReference</code> instance
-		 * 					with the specified properties.
-		 * 
-		 * 	@param manifestReference	The reference to a manifest property as defined
-		 * 								by the <code>ManifestConstant</code> class.
-		 * 	@param manifestInfoProperty	The reference to <code>ManifestInfo</code>
-		 * 								property as defined by the <code>ManifestInfoProperty</code>
-		 * 								class.
+		 *  Constructor. 	Creates a new <code>SplitViewNavigatorMediator</code>
+		 * 					instance.
 		 */
-		public function ManifestReference(manifestReference:String, manifestInfoProperty:String) {
+		public function SplitViewNavigatorMediator() {
 			super();
-			this.initObj(manifestReference, manifestInfoProperty);
+			this.initObj();
 		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Getter properties
+		//  Getter / setter properties
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Returns reference to a manifest property as defined by the
-		 * 	<code>ManifestConstant</code> class.
-		 * 
-		 * 	@see org.flashapi.hummingbird.utils.constants.ManifestConstant
+		 * 	Gets or sets the <code>SplitViewNavigator</code> instance managed
+		 * 	by this mediator object.
 		 */
-		public function get manifestReference():String {
-			return _manifestReference;
+		public function get splitViewNavigator():SplitViewNavigator {
+			return _splitViewNavigator;
 		}
-		
-		/**
-		 * 	Returns the reference to a metadata tag as defined by the
-		 * 	<code>ManifestInfoProperty</code> class.
-		 * 
-		 * 	@see org.flashapi.hummingbird.utils.constants.ManifestInfoProperty
-		 */
-		public function get manifestInfoProperty():String {
-			return _manifestInfoProperty;
+		public function set splitViewNavigator(value:SplitViewNavigator):void {
+			if (_splitViewNavigator) {
+				_splitViewNavigator = null;
+			}
+			_splitViewNavigator = value;
+			if (value) {
+				var len:int = _splitViewNavigator.numViewNavigators - 1;
+				while (len >= 0) {
+					var vnb:ViewNavigatorBase = _splitViewNavigator.getViewNavigatorAt(len);
+					vnb.addEventListener(ElementExistenceEvent.ELEMENT_ADD, this.elementAddHandler);
+					vnb.addEventListener(ElementExistenceEvent.ELEMENT_REMOVE, this.elementRemoveHandler);
+					--len;
+				}
+			}
 		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  Private properties
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * 	@private
-		 * 	
-		 * 	The reference to a metadata tag as defined by the <code>ManifestConstant</code>
-		 * 	class.
-		 */
-		private var _manifestReference:String;
-		
-		/**
-		 * 	@private
-		 * 	
-		 * 	The reference to a MVC interface as defined by the <code>ManifestInfoProperty</code>
-		 * 	class.
-		 */
-		private var _manifestInfoProperty:String;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -130,12 +117,36 @@ package org.flashapi.hummingbird.utils {
 		
 		/**
 		 * 	@private
-		 * 	
-		 * 	Initializes this <code>ManifestReference</code> instance.
+		 * 
+		 * 	The reference to the <code>SplitViewNavigator</code> instance managed
+		 * 	by this mediator object.
 		 */
-		private function initObj(manifestReference:String, manifestInfoProperty:String):void {
-			_manifestReference = manifestReference;
-			_manifestInfoProperty = manifestInfoProperty;
+		private var _splitViewNavigator:SplitViewNavigator;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 * 
+		 * 	Initializes this mediator object.
+		 * 
+		 * 	@throws org.flashapi.hummingbird.exceptions.InvalidApplicationTypeException
+		 * 			Throws a <code>InvalidApplicationTypeException</code> exception if 
+		 * 			the top-level application is not an instance of the
+		 * 			<code>spark.components.Application</code> class.
+		 */
+		private function initObj():void {
+			var app:Object = FlexGlobals.topLevelApplication;
+			var isApplication:Boolean = Boolean(app is Application);
+			if (isApplication == false) {
+				throw new InvalidApplicationTypeException(
+					"Application type mismatch: spark.components.Application required."
+				);
+			}
 		}
 	}
 }

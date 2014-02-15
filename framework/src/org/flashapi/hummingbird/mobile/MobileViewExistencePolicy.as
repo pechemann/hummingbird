@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -46,7 +46,7 @@ package org.flashapi.hummingbird.mobile {
 	
 	/**
 	 *  The <code>MobileViewExistencePolicy</code> class is an enumeration of constant 
-	 * 	values that specify the the value of the <code>IMobileMediator.mobileViewExistencePolicy</code>
+	 * 	values that specify the value of the <code>IMobileMediator.mobileViewExistencePolicy</code>
 	 * 	property.
 	 * 
 	 * 	@see org.flashapi.hummingbird.mobile.IMobileMediator#mobileViewExistencePolicy

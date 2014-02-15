@@ -32,25 +32,25 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.events {
+package org.flashapi.hummingbird.utils {
 	
 	// -----------------------------------------------------------
-	//  DependencyEvent.as
+	//  InterfaceReference.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 28/04/2013 10:36
+	 *  @version 1.0.0, 14/02/2014 20:56
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import flash.events.Event;
-	
 	/**
-	 * 	The <code>DependencyEvent</code> class defines events that are associated
-	 * 	with the Dependency Injection in the pure ActionScript 3.0 Hummingbird framework. 
+	 *  <code>InterfaceReference</code> objects are used by the <code>InterfaceReferenceEnum</code>
+	 * 	class to associate a MVC object to its interface.
+	 * 
+	 * 	@see org.flashapi.hummingbird.enum.InterfaceReferenceEnum
 	 */
-	public class DependencyEvent extends Event {
+	public class InterfaceReference {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -59,67 +59,95 @@ package org.flashapi.hummingbird.events {
 		//--------------------------------------------------------------------------
 		
 		/**
-		 *  Constructor. 	Creates a new <code>DependencyEvent</code> instance.
+		 *  Constructor. 	Creates a new <code>InterfaceReference</code> instance
+		 * 					with the specified properties.
 		 * 
-		 * 	@param	type		The type of the event, accessible as <code>Event.type</code>.
-		 * 	@param	bubbles		Determines whether the <code>DependencyEvent</code>
-		 * 						object participates in the bubbling stage of the event
-		 * 						flow. The default value is <code>false</code>.
-		 * 	@param	cancelable	Determines whether the <code>DependencyEvent</code>
-		 * 						object can be canceled. The default values is
-		 * 						<code>false</code>.
+		 * 	@param interfaceType	The reference to the type of the associated
+		 * 							interface.
+		 * 	@param interfacePackage	The reference to the package name of the associated
+		 * 							interface.
 		 */
-		public function DependencyEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false) {
-			super(type, bubbles, cancelable);
+		public function InterfaceReference(interfaceType:String, interfacePackage:String) {
+			super();
+			this.initObj(interfaceType, interfacePackage);
 		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Event Types
+		//  Getter properties
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	Defines the value of the type property of the <code>dependencyComplete</code>
-		 * 	event object.
-		 * 
-		 *  <p>The properties of the event object have the following values:</p>
-		 *  <table class="innertable">
-		 *     <tr><th>Property</th><th>Value</th></tr>
-		 *     <tr><td><code>bubbles</code></td><td>false</td></tr>
-		 *     <tr><td><code>cancelable</code></td><td>false</td></tr>
-		 *     <tr><td><code>currentTarget</code></td><td>The Object that defines the
-		 *       event listener that handles the event. For example, if you use
-		 *       <code>myButton.addEventListener()</code> to register an event listener,
-		 *       myButton is the value of the <code>currentTarget</code>. </td></tr>
-		 *     <tr><td><code>target</code></td><td>The Object that dispatched the event;
-		 *       it is not always the Object listening for the event.
-		 *       Use the <code>currentTarget</code> property to always access the
-		 *       Object listening for the event.</td></tr>
-		 *  </table>
-		 *
-		 *  @eventType dependencyComplete
+		 * 	Returns the reference to the type of the associated interface.
 		 */
-		public static const DEPENDENCY_COMPLETE:String = "dependencyComplete";
+		public function getInterfaceType():String {
+			return _interfaceType;
+		}
+		
+		/**
+		 * 	Returns the reference to the package name of the associated interface.
+		 */
+		public function getInterfacePackage():String {
+			return _interfacePackage;
+		}
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public methods
+		//  Private constants
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
 		 * 	@private
+		 * 	
+		 * 	The main path to the Hummingbird Framework pacakge.
 		 */
-		override public function clone():Event {
-			return new DependencyEvent(this.type, this.bubbles, this.cancelable);
-		}
+		private static const HUMMINGBIRD_PACKAGE:String = "org.flashapi.hummingbird.";
 		
 		/**
 		 * 	@private
+		 * 	
+		 * 	Represents two successive semicolons.
 		 */
-		override public function toString():String {
-			return this.formatToString("DependencyEvent", "type", "bubbles", "cancelable");
+		private static const DOUBLE_SEMICOLON:String = "::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	The reference to the type of the associated interface.
+		 */
+		private var _interfaceType:String;
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	The reference to the package name of the associated interface.
+		 */
+		private var _interfacePackage:String;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	Initializes this <code>InterfaceReference</code> instance.
+		 */
+		private function initObj(interfaceType:String, interfacePackage:String):void {
+			_interfaceType = interfaceType;
+			_interfacePackage =
+				InterfaceReference.HUMMINGBIRD_PACKAGE + interfacePackage +
+				InterfaceReference.DOUBLE_SEMICOLON + interfaceType;
 		}
 	}
 }

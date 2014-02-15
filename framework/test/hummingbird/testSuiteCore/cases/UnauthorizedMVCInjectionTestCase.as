@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -49,7 +49,6 @@ package hummingbird.testSuiteCore.cases {
 	import hummingbird.project.models.invalidInjections.ControllerInModel;
 	import hummingbird.project.models.invalidInjections.ModelInModel;
 	import hummingbird.project.models.invalidInjections.OrchestratorInModel;
-	import hummingbird.project.models.invalidInjections.ServiceInModel;
 	import hummingbird.project.orchestrators.invalidInjections.ControllerInOrchestrator;
 	import hummingbird.project.orchestrators.invalidInjections.OrchestratorInOrchestrator;
 	import hummingbird.project.orchestrators.invalidInjections.ServiceInOrchestrator;
@@ -90,27 +89,20 @@ package hummingbird.testSuiteCore.cases {
 		
 		//--> IModel
 		[Test( 	order="2",
-				description="This tests the IHummingbirdContainer.doLookup() method with injection of an Service in a Model object",
-				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
-		public function IHummingbirdContainer_doLookup_Service_In_Model_Test() : void  {
-			HummingbirdContainer.getInstance().doLookup(new ServiceInModel());
-		}
-		
-		[Test( 	order="3",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of a Controller in a Model object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Controller_In_Model_Test() : void  {
 			HummingbirdContainer.getInstance().doLookup(new ControllerInModel());
 		}
 		
-		[Test( 	order="4",
+		[Test( 	order="3",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of an Orchestrator in a Model object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Orchestrator_In_Model_Test() : void  {
 			HummingbirdContainer.getInstance().doLookup(new OrchestratorInModel());
 		}
 		
-		[Test( 	order="5",
+		[Test( 	order="4",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of an Model in a Model object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Model_In_Model_Test() : void  {
@@ -118,7 +110,7 @@ package hummingbird.testSuiteCore.cases {
 		}
 		
 		//--> IController
-		[Test( 	order="6",
+		[Test( 	order="5",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of a Controller in a Controller object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Controller_In_Controller_Test() : void  {
@@ -126,28 +118,28 @@ package hummingbird.testSuiteCore.cases {
 		}
 		
 		//--> IService
-		[Test( 	order="7",
+		[Test( 	order="6",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of a Controller in a Service object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Controller_In_Service_Test() : void  {
 			HummingbirdContainer.getInstance().doLookup(new ControllerInService());
 		}
 		
-		[Test( 	order="8",
+		[Test( 	order="7",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of a Model in a Service object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Model_In_Service_Test() : void  {
 			HummingbirdContainer.getInstance().doLookup(new ModelInService());
 		}
 		
-		[Test( 	order="9",
+		[Test( 	order="8",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of a Service in a Service object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Service_In_Service_Test() : void  {
 			HummingbirdContainer.getInstance().doLookup(new ServiceInService());
 		}
 		
-		[Test( 	order="10",
+		[Test( 	order="9",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of an Orchestrator in a Service object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Orchestrator_In_Service_Test() : void  {
@@ -155,21 +147,21 @@ package hummingbird.testSuiteCore.cases {
 		}
 		
 		//--> IOrchestrator
-		[Test( 	order="11",
+		[Test( 	order="10",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of a Controller in an Orchestrator object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Controller_In_Orchestrator_Test() : void  {
 			HummingbirdContainer.getInstance().doLookup(new ControllerInOrchestrator());
 		}
 		
-		[Test( 	order="12",
+		[Test( 	order="11",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of a Service in an Orchestrator object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Service_In_Orchestrator_Test() : void  {
 			HummingbirdContainer.getInstance().doLookup(new ServiceInOrchestrator());
 		}
 		
-		[Test( 	order="13",
+		[Test( 	order="12",
 				description="This tests the IHummingbirdContainer.doLookup() method with injection of an Orchestrator in an Orchestrator object",
 				expected="org.flashapi.hummingbird.exceptions.MetadataException")]
 		public function IHummingbirdContainer_doLookup_Orchestrator_In_Orchestrator_Test() : void  {

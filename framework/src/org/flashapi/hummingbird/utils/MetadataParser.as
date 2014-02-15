@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -52,6 +52,7 @@ package org.flashapi.hummingbird.utils {
 	import org.flashapi.hummingbird.core.IApplicationContext;
 	import org.flashapi.hummingbird.core.IMVCObject;
 	import org.flashapi.hummingbird.core.MVCReference;
+	import org.flashapi.hummingbird.enum.InterfaceReferenceEnum;
 	import org.flashapi.hummingbird.enum.MetadataReferenceEnum;
 	import org.flashapi.hummingbird.events.DependencyEvent;
 	import org.flashapi.hummingbird.exceptions.InvalidTypeException;
@@ -315,43 +316,56 @@ package org.flashapi.hummingbird.utils {
 		 */
 		private static function injectDependencies(obj:Object, singletonInstances:Dictionary):void {
 			var reflection:XML = describeType(obj);
+			var interfaceType:String;
 			//--> Model objects must be created before controller and orchestrator objects:
 			if (obj is IStarlingView) {
+				interfaceType = InterfaceReferenceEnum.STARLING_VIEW.getInterfaceType();
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.CONTROLLER);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IStarlingView");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, interfaceType);
 				obj.dispatchEvent(new MetadataParser.StarlingEventRef(MetadataParser.StarlingEventRef.DEPENDENCY_COMPLETE));
 			} else if (obj is IView) {
+				interfaceType = InterfaceReferenceEnum.VIEW.getInterfaceType();
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.CONTROLLER);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IView");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, interfaceType);
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
 			} else if (obj is IApplicationContext) {
+				interfaceType = InterfaceReferenceEnum.APPLICATION_CONTEXT.getInterfaceType();
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.CONTROLLER);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IApplicationContext");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, interfaceType);
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
 			} else if (obj is IController) {
+				interfaceType = InterfaceReferenceEnum.CONTROLLER.getInterfaceType();
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.SERVICE);
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.ORCHESTRATOR);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, "IController");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, interfaceType);
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
 			} else if (obj is IOrchestrator) {
+				interfaceType = InterfaceReferenceEnum.ORCHESTRATOR.getInterfaceType();
 				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.MODEL);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, "IOrchestrator");
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, "IOrchestrator");
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, "IOrchestrator");
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, interfaceType);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, interfaceType);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, interfaceType);
 				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
-			} else {
-				var interfaceRef:String = (obj is IModel)  ? "IModel" : "IService";
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.MODEL, interfaceRef);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, interfaceRef);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, interfaceRef);
-				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, interfaceRef);
+			} else if (obj is IModel) {
+				interfaceType = InterfaceReferenceEnum.MODEL.getInterfaceType();
+				MetadataParser.injectInstances(obj, reflection, singletonInstances, MetadataConstant.SERVICE);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.MODEL, interfaceType);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, interfaceType);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, interfaceType);
+				obj.dispatchEvent(new DependencyEvent(DependencyEvent.DEPENDENCY_COMPLETE));
+			} else if (obj is IService) {
+				interfaceType = InterfaceReferenceEnum.SERVICE.getInterfaceType();
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.MODEL, interfaceType);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.CONTROLLER, interfaceType);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.ORCHESTRATOR, interfaceType);
+				MetadataParser.checkInvalidDependencies(obj, reflection, MetadataConstant.SERVICE, interfaceType);
 			}
 		}
 		

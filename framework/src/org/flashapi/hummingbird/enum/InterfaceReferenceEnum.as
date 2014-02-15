@@ -3,7 +3,7 @@
 //    Simplified BSD License
 //    ======================
 //    
-//    Copyright 2013 Pascal ECHEMANN. All rights reserved.
+//    Copyright 2013-2014 Pascal ECHEMANN. All rights reserved.
 //    
 //    Redistribution and use in source and binary forms, with or without modification,
 //    are permitted provided that the following conditions are met:
@@ -32,24 +32,26 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package org.flashapi.hummingbird.utils.constants {
+package org.flashapi.hummingbird.enum {
 	
 	// -----------------------------------------------------------
-	//  InterfaceReference.as
+	//  InterfaceReferenceEnum.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 05/07/2013 21:57
+	 *  @version 1.0.0, 14/02/2014 20:56
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import org.flashapi.hummingbird.utils.InterfaceReference;
+	
 	/**
-	 *  The <code>InterfaceReference</code> class is an enumeration of constant 
+	 *  The <code>InterfaceReferenceEnum</code> class is an enumeration of constant 
 	 * 	values that specify the reference of the MVC interfaces used by the Hummingbird
 	 * 	framework.
 	 */
-	public class InterfaceReference {
+	public class InterfaceReferenceEnum {
 		
 		//--------------------------------------------------------------------------
 		//
@@ -60,21 +62,43 @@ package org.flashapi.hummingbird.utils.constants {
 		/**
 		 * 	Represents the <code>IService</code> interface reference.
 		 */
-		public static const SERVICE:String = "org.flashapi.hummingbird.service::IService";
+		public static const SERVICE:InterfaceReference =
+			new InterfaceReference("IService", "service");
 		
 		/**
 		 * 	Represents the <code>IModel</code> interface reference.
 		 */
-		public static const MODEL:String = "org.flashapi.hummingbird.model::IModel";
+		public static const MODEL:InterfaceReference =
+			new InterfaceReference("IModel", "service");
 		
 		/**
 		 * 	Represents the <code>IController</code> interface reference.
 		 */
-		public static const CONTROLLER:String = "org.flashapi.hummingbird.controller::IController";
+		public static const CONTROLLER:InterfaceReference =
+			new InterfaceReference("IController", "controller");
 		
 		/**
 		 * 	Represents the <code>IOrchestrator</code> interface reference.
 		 */
-		public static const ORCHESTRATOR:String = "org.flashapi.hummingbird.orchestrator::IOrchestrator";
+		public static const ORCHESTRATOR:InterfaceReference =
+			new InterfaceReference("IOrchestrator", "orchestrator");
+		
+		/**
+		 * 	Represents the <code>IView</code> interface reference.
+		 */
+		public static const VIEW:InterfaceReference =
+			new InterfaceReference("IView", "view");
+		
+		/**
+		 * 	Represents the <code>IStarlingView</code> interface reference.
+		 */
+		public static const STARLING_VIEW:InterfaceReference =
+			new InterfaceReference("IStarlingView", "view");
+		
+		/**
+		 * 	Represents the <code>IApplicationContext</code> interface reference.
+		 */
+		public static const APPLICATION_CONTEXT:InterfaceReference =
+			new InterfaceReference("IApplicationContext", "core");
 	}
 }
