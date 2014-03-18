@@ -32,56 +32,67 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package hummingbird.testSuiteAS {
+package hummingbird.testSuiteCore.cases {
 	
 	// -----------------------------------------------------------
-	//  HummingbirdASSuite.as
+	//  ViewAdapterFactoryTestCase.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 17/10/2013 21:47
+	 *  @version 1.0.0, 16/03/2014 18:38
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import hummingbird.testSuiteAS.cases.AdaptersTestCase;
-	import hummingbird.testSuiteAS.cases.ApplicationContextASTestCase;
-	import hummingbird.testSuiteAS.cases.ComponentsASTestCase;
-	import hummingbird.testSuiteAS.cases.ViewsManagmentASTestCase;
+	import flash.utils.getQualifiedClassName;
+	import org.flashapi.hummingbird.factory.ViewAdapterFactory;
+	import org.flashapi.hummingbird.utils.adapters.StarlingViewAdapter;
+	import org.flexunit.Assert;
 	
 	/**
-	 * 	The <code>HummingbirdASSuite</code> class represents the test suite for the 
-	 * 	pure AS3 Hummingbird Framework.
+	 * 	The <code>ViewAdapterFactoryTestCase</code> class represents the test case  
+	 * 	for the Hummingbird Framework view adapters factory.
 	 */
-	[Suite (order="2")]
-	[RunWith("org.flexunit.runners.Suite")]
-	public class HummingbirdASSuite {
+	public class ViewAdapterFactoryTestCase {
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public properties
+		//  Test cases
+		//
+		//--------------------------------------------------------------------------
+		
+		[Test( 	order="1",
+				description = "This tests the ViewAdapterFactory constructor illegal call",
+				expected="flash.errors.IllegalOperationError" )]
+		public function new_ViewAdapterFactory_Test():void  {
+			var factory:ViewAdapterFactory = new ViewAdapterFactory(null);
+		}
+		
+		[Test( 	order="2",
+				description = "This tests the ViewAdapterFactory.getViewAdapterClassRef() method")]
+		public function ViewAdapterFactory_getViewAdapterClassRef_Test():void  {
+			var factory:ViewAdapterFactory = ViewAdapterFactory.makeFactory(StarlingViewAdapter);
+			var classRef:Class = factory.getViewAdapterClassRef();
+			Assert.assertTrue(getQualifiedClassName(classRef) == this.STARLING_VIEW_ADAPTER_CLASS_REF);
+			Assert.assertFalse(getQualifiedClassName(classRef) == this.AS_VIEW_ADAPTER_CLASS_REF);
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private properties
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	The test case for the pure ActionScript Hummingbird Framework application
-		 * 	context managment.
+		 * 	The qualified class name of the <code>StarlingViewAdapter</code> class.
 		 */
-		public var test1:ApplicationContextASTestCase;
+		private const STARLING_VIEW_ADAPTER_CLASS_REF:String =
+			"org.flashapi.hummingbird.utils.adapters::StarlingViewAdapter";
 		
 		/**
-		 * 	The test case for the pure ActionScript Hummingbird Framework components.
+		 * 	The qualified class name of the <code>ASViewAdapter</code> class.
 		 */
-		public var test2:ComponentsASTestCase;
-		
-		/**
-		 * 	The test case for the pure ActionScript Hummingbird Framework views
-		 * 	managment.
-		 */
-		public var test3:ViewsManagmentASTestCase;
-		/**
-		 * 	The test case for the ActionScript Hummingbird Framework views adptation.
-		 */
-		public var test4:AdaptersTestCase;
+		private const AS_VIEW_ADAPTER_CLASS_REF:String =
+			"org.flashapi.hummingbird.utils.adapters::ASViewAdapter";
 	}
 }

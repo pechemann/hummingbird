@@ -32,56 +32,77 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package hummingbird.testSuiteStarling {
+package hummingbird.testSuiteAS.cases {
 	
 	// -----------------------------------------------------------
-	//  HummingbirdStarlingSuite.as
+	//  AdaptersTestCase.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.1, 16/03/2014 17:067
+	 *  @version 1.0.0, 16/03/2014 19:39
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import hummingbird.testSuiteStarling.cases.AdaptersStarlingTestCase;
-	import hummingbird.testSuiteStarling.cases.ApplicationContextStarlingTestCase;
-	import hummingbird.testSuiteStarling.cases.ComponentsStarlingTestCase;
-	import hummingbird.testSuiteStarling.cases.ViewsManagmentStarlingTestCase;
+	import hummingbird.HummingbirdTester;
+	import hummingbird.project.views.DisplayObjectContainerView;
+	import hummingbird.project.views.DisplayObjectView;
+	import hummingbird.project.views.invalidAdapters.InvalidView;
+	import org.flashapi.hummingbird.factory.ViewAdapterFactory;
+	import org.flashapi.hummingbird.HummingbirdAS;
+	import org.flashapi.hummingbird.utils.adapters.ViewAdapter;
+	import org.flashapi.hummingbird.view.IView;
 	
 	/**
-	 * 	The <code>HummingbirdStarlingSuite</code> class represents the test suite for  
-	 * 	the Starling Hummingbird Framework.
+	 * 	The <code>AdaptersTestCase</code> class represents the test   
+	 * 	case for the ActionScript Hummingbird Framework views adaptation.
 	 */
-	[Suite (order="4")]
-	[RunWith("org.flexunit.runners.Suite")]
-	public class HummingbirdStarlingSuite {
+	public class AdaptersTestCase {
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public properties
+		//  Test cases
 		//
 		//--------------------------------------------------------------------------
 		
-		/**
-		 * 	The test case for the Starling Hummingbird Framework application context
-		 * 	managment.
-		 */
-		public var test1:ApplicationContextStarlingTestCase;
+		[BeforeClass]
+		public static function createContexts():void  {
+			HummingbirdAS.setApplicationContext(
+				HummingbirdTester.getBasicContext(),
+				HummingbirdTester.getStage()
+			);
+		}
 		
-		/**
-		 * 	The test case for the Starling Hummingbird Framework components.
-		 */
-		public var test2:ComponentsStarlingTestCase;
+		[Test( 	order="1",
+				description = "This tests the ViewAdapterFactory.makeFactory() method to create a StarlingViewAdapter object" )]
+		public function ViewAdapterFactory_makeFactory_ASViewAdapter_Test():void  {
+			var factory:ViewAdapterFactory = ViewAdapterFactory.makeFactory(ViewAdapter);
+		}
 		
-		/**
-		 * 	The test case for the Starling Hummingbird Framework views managment.
-		 */
-		public var test3:ViewsManagmentStarlingTestCase;
+		[Test( 	order="2",
+				description = "This tests the ASViewAdapter adapter object with a valid DisplayObject view" )]
+		public function valid_DisplayObject_ASViewAdapter_Test():void  {
+			var view:IView = HummingbirdAS.getFactory().createView(DisplayObjectView);
+			HummingbirdAS.addToScene(view);
+		}
 		
-		/**
-		 * 	The test case for the Starling Hummingbird Framework views adptation.
-		 */
-		public var test4:AdaptersStarlingTestCase;
+		[Test( 	order="3",
+				description = "This tests the ASViewAdapter adapter object with a valid DisplayObjectContainer view" )]
+		public function valid_DisplayObjectContainer_ASViewAdapter_Test():void  {
+			var view:IView = HummingbirdAS.getFactory().createView(DisplayObjectContainerView);
+			HummingbirdAS.addToScene(view);
+		}
+		
+		[Test( 	order="4",
+				description = "This tests the ASViewAdapter adapter object with an invalid view",
+				expected="org.flashapi.hummingbird.exceptions.InvalidTypeException")]
+		public function invalid_DisplayObject_ASViewAdapter_Test():void  {
+			var view:IView = HummingbirdAS.getFactory().createView(InvalidView);
+		}
+		
+		[AfterClass]
+		public static function deleteContexts():void  {
+			HummingbirdAS.clearApplicationContext(HummingbirdTester.getBasicContext());
+		}
 	}
 }

@@ -40,7 +40,7 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.2.0, 24/11/2013 16:32
+	 *  @version 1.2.1, 01/03/2014 09:51
 	 *  @see http://www.flashapi.org/
 	 */
 	
@@ -91,6 +91,15 @@ package org.flashapi.hummingbird.core {
 		 * 			MVC object instance alias for which it cannot find a definition.
 		 */
 		function getMVCObject(alias:String):IMVCObject;
+		
+		/**
+		 * 	Returns an integer that represents the major version of the current Flash 
+		 * 	Player instance. The the following string, the major version is "10" :
+		 *  <code>WIN 10,1,52,14</code>
+		 * 
+		 * 	@return The major version of the current Flash Player instance.
+		 */
+		function getFlashPlayerMajorVersion():int;
 		
 		/**
 		 * 	Removes the MVC object specified by its alias. You tipically use the

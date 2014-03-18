@@ -32,56 +32,38 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////////
 
-package hummingbird.testSuiteAS {
+package org.flashapi.hummingbird.utils.adapters {
 	
 	// -----------------------------------------------------------
-	//  HummingbirdASSuite.as
+	//  IViewAdapter.as
 	// -----------------------------------------------------------
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.0.0, 17/10/2013 21:47
+	 *  @version 1.0.0, 15/03/2014 18:26
 	 *  @see http://www.flashapi.org/
 	 */
 	
-	import hummingbird.testSuiteAS.cases.AdaptersTestCase;
-	import hummingbird.testSuiteAS.cases.ApplicationContextASTestCase;
-	import hummingbird.testSuiteAS.cases.ComponentsASTestCase;
-	import hummingbird.testSuiteAS.cases.ViewsManagmentASTestCase;
+	import org.flashapi.hummingbird.core.IFinalizable;
 	
 	/**
-	 * 	The <code>HummingbirdASSuite</code> class represents the test suite for the 
-	 * 	pure AS3 Hummingbird Framework.
+	 * 	The <code>IViewAdapter</code> interface provides the basic implementation
+	 *  for adapter objects that provide MVC built-in capabilities to view objects
+	 * 	which are not part of the Hummingbird framework.
 	 */
-	[Suite (order="2")]
-	[RunWith("org.flexunit.runners.Suite")]
-	public class HummingbirdASSuite {
+	public interface IViewAdapter extends IFinalizable {
 		
 		//--------------------------------------------------------------------------
 		//
-		//  Public properties
+		//  Getter / setter properties
 		//
 		//--------------------------------------------------------------------------
 		
 		/**
-		 * 	The test case for the pure ActionScript Hummingbird Framework application
-		 * 	context managment.
+		 * 	Gets or sets the callback function called when the Dependency Injection  
+		 * 	process is completely performed on the adaptee object.
 		 */
-		public var test1:ApplicationContextASTestCase;
-		
-		/**
-		 * 	The test case for the pure ActionScript Hummingbird Framework components.
-		 */
-		public var test2:ComponentsASTestCase;
-		
-		/**
-		 * 	The test case for the pure ActionScript Hummingbird Framework views
-		 * 	managment.
-		 */
-		public var test3:ViewsManagmentASTestCase;
-		/**
-		 * 	The test case for the ActionScript Hummingbird Framework views adptation.
-		 */
-		public var test4:AdaptersTestCase;
+		function get onDependencyComplete():Function;
+		function set onDependencyComplete(value:Function):void;
 	}
 }

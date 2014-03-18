@@ -47,6 +47,7 @@ package org.flashapi.hummingbird {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
 	import org.flashapi.hummingbird.core.HummingbirdBase;
+	import org.flashapi.hummingbird.core.HummingbirdContainer;
 	import org.flashapi.hummingbird.core.HummingbirdEventDispatcher;
 	import org.flashapi.hummingbird.core.HummingbirdVersion;
 	import org.flashapi.hummingbird.core.IApplicationContext;
@@ -145,7 +146,16 @@ package org.flashapi.hummingbird {
 		 * 	@see #removeFromScene()
 		 */
 		public static function clearScene():void {
-			HummingbirdBase.getStage().removeChildren();
+			var stg:Stage = HummingbirdBase.getStage();
+			if (_fpMajorVersion == -1) {
+				_fpMajorVersion = HummingbirdContainer.getInstance().getFlashPlayerMajorVersion();
+			} else if (_fpMajorVersion > 9) {
+				stg["removeChildren"]();
+			} else {
+				while (stg.numChildren) {
+					stg.removeChildAt(0);
+				}
+			}
 		}
 		
 		/**
@@ -196,5 +206,18 @@ package org.flashapi.hummingbird {
 		public static function getEventDispatcher():HummingbirdEventDispatcher {
 			return HummingbirdBase.getEventDispatcher();
 		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private properties
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 * 	
+		 * 	Stores the major version of the Flash Player that runs the application.
+		 */
+		private static var _fpMajorVersion:int = -1;
 	}
 }

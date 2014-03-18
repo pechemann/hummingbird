@@ -54,7 +54,7 @@ package org.flashapi.hummingbird.factory {
 	
 	/**
 	 * 	Default implementation of the <code>IDefinitionRegistry</code> interface:
-	 * a full-fledged MVC objects factory based on MVC definition objects.
+	 *  a full-fledged MVC objects factory based on MVC definition objects.
 	 * 
 	 * 	<p>Typical usage is registering all MVC objects definitions first, before
 	 * 	accessing them. MVC object definition lookup is therefore an inexpensive

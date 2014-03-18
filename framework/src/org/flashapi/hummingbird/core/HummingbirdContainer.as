@@ -40,10 +40,11 @@ package org.flashapi.hummingbird.core {
 
 	/**
 	 *  @author Pascal ECHEMANN
-	 *  @version 1.1.0, 24/11/2013 16:00
+	 *  @version 1.1.1, 01/03/2014 09:48
 	 *  @see http://www.flashapi.org/
 	 */
 	
+	import flash.system.Capabilities;
 	import flash.utils.Dictionary;
 	import org.flashapi.hummingbird.core.IApplicationContext;
 	import org.flashapi.hummingbird.core.IMVCObject;
@@ -152,6 +153,13 @@ package org.flashapi.hummingbird.core {
 			return hasMVCInstance;
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
+		public function getFlashPlayerMajorVersion():int {
+			return _fpMajorVersion;
+		}
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Privare properties
@@ -193,6 +201,13 @@ package org.flashapi.hummingbird.core {
 		 */
 		private var _applicationContextReferences:Vector.<IApplicationContext>;
 		
+		/**
+		 * 	@private
+		 * 	
+		 * 	The major version of the Flash Player that runs the application.
+		 */
+		private var _fpMajorVersion:int;
+		
 		//--------------------------------------------------------------------------
 		//
 		//  Private methods
@@ -210,6 +225,8 @@ package org.flashapi.hummingbird.core {
 			_singletonReferences = new Dictionary();
 			_singletonInstances = new Dictionary();
 			_applicationContextReferences = new Vector.<IApplicationContext>();
+			_fpMajorVersion = parseInt(Capabilities.version.substr(4, 2));
+			_logger.config("Current Flash Player version: " + _fpMajorVersion);
 		}
 		
 		/**

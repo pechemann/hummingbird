@@ -24,6 +24,9 @@
 		import org.flashapi.hummingbird.core.AbstractApplicationContext;
 		import org.flashapi.hummingbird.core.IApplicationContext;
 		import org.flashapi.hummingbird.Hummingbird;
+		import org.flashapi.hummingbird.logging.ILogObserver;
+		import org.flashapi.hummingbird.logging.Logger;
+		import org.flashapi.hummingbird.logging.TraceLogObserver;
 		import org.flashapi.hummingbird.starling.StarlingID;
 		import org.flexunit.listeners.UIListener;
 		import org.flexunit.runner.FlexUnitCore;
@@ -133,9 +136,18 @@
 		 * 	Initializes the application.
 		 */
 		private function creationCompleteHandler(e:FlexEvent):void {
+			this.initLogger();
 			this.initFlexUnit();
 			this.initParameters();
 			this.runTest();
+		}
+		
+		/**
+		 * 	Initializes the Hummingbird Logging Framework.
+		 */
+		private function initLogger():void {
+			var logTarget:ILogObserver = new TraceLogObserver();
+			logTarget.setLogger(Logger.getInstance());
 		}
 		
 		/**

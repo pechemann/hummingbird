@@ -52,6 +52,7 @@ package hummingbird.testSuiteCore {
 	import hummingbird.testSuiteCore.cases.MVCManagmentTestCase;
 	import hummingbird.testSuiteCore.cases.SingletonsTestCase;
 	import hummingbird.testSuiteCore.cases.UnauthorizedMVCInjectionTestCase;
+	import hummingbird.testSuiteCore.cases.ViewAdapterFactoryTestCase;
 	
 	/**
 	 * 	The <code>HummingbirdCoreSuite</code> class represents the test suite for the 
@@ -106,5 +107,10 @@ package hummingbird.testSuiteCore {
 		 * 	The test case for the <code>IFinalizable</code> interface.
 		 */
 		public var test8:FinalizableTestCase;
+		
+		/**
+		 * 	The test case for the Hummingbird view adapters factory.
+		 */
+		public var test9:ViewAdapterFactoryTestCase;
 	}
 }
